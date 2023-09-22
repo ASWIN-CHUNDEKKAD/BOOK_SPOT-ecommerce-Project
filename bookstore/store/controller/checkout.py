@@ -22,7 +22,7 @@ def index(request):
     for item in cartitems:
         total_price = total_price + item.product.selling_price * item.product_qty
         
-    userprofile = Profile.objects.filter(user=request.user).first()
+    userprofile = Profile.objects.filter(user=request.user)
         
     context = {
             'cartitems':cartitems,
@@ -36,7 +36,7 @@ def index(request):
 def placeorder(request):
     if request.method == "POST":
         
-        currentuser = User.objects.filter(id=request.user.id)
+        currentuser = User.objects.filter(id=request.user.id).first()
         if not currentuser.first_name:
             currentuser.first_name = request.POST.get('fname')
             currentuser.last_name = request.POST.get('lname')
@@ -127,6 +127,7 @@ def placeorder(request):
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
     cart = Cart.objects.filter(user=request.user)
+    # TODO:REMOVE FOR LOOP AND IMPLEMENT TOTAL PRICE LOGIC USING DATABASE
     total_price = 0
     for item in cart:
         total_price = total_price + item.product.selling_price * item.product_qty

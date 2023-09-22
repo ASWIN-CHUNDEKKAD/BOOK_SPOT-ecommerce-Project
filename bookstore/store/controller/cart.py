@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 
 from store.models import Product,Cart
 
+
+'''add to cart function'''
 @login_required(login_url='loginpage')
 def addtocart(request):
     if request.method == 'POST':
@@ -29,13 +31,15 @@ def addtocart(request):
             return JsonResponse({'status':"Login to continue"}) 
     return redirect('/')    
 
+
+'''viewcart page function'''
 @login_required(login_url='loginpage')
 def viewcart(request):
     cart = Cart.objects.filter(user=request.user)
     context = {'cart' : cart}
     return render(request,'store/cart.html',context)
             
-                     
+'''product qty increment function'''          
 def updatecart(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
@@ -47,6 +51,7 @@ def updatecart(request):
         return JsonResponse({'status' : 'Updated Successfully'})
     return redirect('/')
 
+'''delete cart function'''
 def deletecartitem(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))

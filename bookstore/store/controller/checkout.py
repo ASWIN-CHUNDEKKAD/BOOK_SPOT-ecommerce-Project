@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from store.models import Cart,Order,Orderitem,Product,Profile
 from django.contrib.auth.models import User
 import random
+# from django.core.mail import EmailMessage
+# from django.template.loader import render_to_string
 
 '''checkout page function '''
 @login_required(login_url='loginpage')
@@ -13,6 +15,7 @@ def index(request):
     for item in rowcart:
         if item.product_qty > item.product.quantity:
             Cart.objects.delete(id=item.id)
+            # return JsonResponse({'status' : 'no such qty'})
             
     cartitems = Cart.objects.filter(user=request.user)
     total_price = 0
@@ -28,11 +31,12 @@ def index(request):
             }
     return render(request,'store/checkout.html',context)
 
+'''placeorder functionality'''
 @login_required(login_url='loginpage')
 def placeorder(request):
     if request.method == "POST":
         
-        currentuser = User.objects.filter(id=request.user.id).first()
+        currentuser = User.objects.filter(id=request.user.id)
         if not currentuser.first_name:
             currentuser.first_name = request.POST.get('fname')
             currentuser.last_name = request.POST.get('lname')
@@ -96,6 +100,18 @@ def placeorder(request):
         # To clear user's cart
         Cart.objects.filter(user=request.user).delete()
         
+        # Send order recieved email to customer
+        
+        # orders = Order.objects.filter(user=request.user)
+        # mail_subject = "THANK YOU FOR YOUR ORDER"
+        # message = render_to_string('store/orders/order_recieved_email.html',{
+        #     'user':request.user,
+        #     'orders':orders,
+        # })
+        # to_email = request.user.email
+        # send_email = EmailMessage(mail_subject,message, to_email)
+        # send_email.send()
+        
             
         payMode = request.POST.get('payment_mode')
         if (payMode=="Paid by Razorpay"):
@@ -107,6 +123,7 @@ def placeorder(request):
     return redirect('/')
 
 
+'''Rozorpay function'''
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
     cart = Cart.objects.filter(user=request.user)

@@ -5,12 +5,15 @@ from django.contrib.auth.decorators import login_required
 
 from store.models import Wishlist,Product
 
+'''wishlist page functionality'''
 @login_required(login_url='loginpage')
 def index(request):
     wishlist = Wishlist.objects.filter(user=request.user)
     context = {'wishlist':wishlist}
     return render(request,'store/wishlist.html',context)
 
+
+'''add to wishlist'''
 def addtowishlist(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -29,7 +32,7 @@ def addtowishlist(request):
                                       
     return redirect('/')
 
-
+'''delete wishlist'''
 def deletewishlistitem(request):
     if request.method == 'POST':
         if request.user.is_authenticated:

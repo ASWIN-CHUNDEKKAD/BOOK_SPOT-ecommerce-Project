@@ -10,7 +10,6 @@
       <a class="{% if request.resolver_match.url_name == 'cart' %}text-white active {% else %}text-dark active{% endif %}" href="{% url 'cart' %}">Cart </a>
     </div>
 </div>
-
   <div class="py-3">
     <div class="container">
       <div class="row">
@@ -49,6 +48,7 @@
                   </div>
                 {% endfor %}
                 <a href="{% url 'checkout' %}" class="btn btn-outline-success float-end">Checkout</a>
+
               {% else %}
                   <h4>Your Cart Is Empty</h4>
               {% endif %}

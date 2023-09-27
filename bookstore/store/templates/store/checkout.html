@@ -1,4 +1,3 @@
-
 {% extends 'store/layouts/main.html' %}
 
 {% block content %}
@@ -85,7 +84,7 @@
                                                 {{ item.product.name }} 
                                             </td>
                                             <td> {{ item.product_qty }} </td>
-                                            <td> {{ item.product.selling_price | stringformat:'d'}} </td>
+                                            <td><i class="fa fa-inr" aria-hidden="true"></i> {{ item.product.selling_price | stringformat:'d'}} </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

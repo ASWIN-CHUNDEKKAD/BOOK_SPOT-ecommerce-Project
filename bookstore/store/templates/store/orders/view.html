@@ -58,7 +58,7 @@
                                             <tr>
                                                 <td> {{ item.product.name }} </td>
                                                 <td class="text-center"> {{ item.quantity }} </td>
-                                                <td> {{ item.price }} </td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i> {{ item.price }} </td>
                                                 <td> 
                                                     <img src="{{ item.product.product_image.url }}" height="50px" width="50px" alt="image">
                                                 </td>
@@ -67,7 +67,7 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                <h4>Grand Total : {{ order.total_price }}</h4>
+                                <h4>Grand Total :<i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</h4>
                                 <h6>Payment mode :{{ order.payment_mode }}</h6>
                                 <h6>Order status :{{ order.status }}</h6>
                                 <h6>Tracking no :{{ order.tracking_no }}</h6>

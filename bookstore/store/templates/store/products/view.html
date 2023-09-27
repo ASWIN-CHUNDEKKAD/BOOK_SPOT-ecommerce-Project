@@ -35,8 +35,8 @@
                     {% endif %}
                   </h2>
                   <hr style="height:2px;border-width:2px;color:red;background-color:red">
-                  <label class="me=3">Original Price : <s>Rs {{products.original_price | stringformat:'d'}}</s></label><br><br>
-                  <label class="fw-bold">Selling Price : Rs {{products.selling_price | stringformat:'d'}}</label>
+                  <label class="me=3">Original Price : <s><i class="fa fa-inr" aria-hidden="true"></i> {{products.original_price | stringformat:'d'}}</s></label><br><br>
+                  <label class="fw-bold">Selling Price : <i class="fa fa-inr" aria-hidden="true"></i> {{products.selling_price | stringformat:'d'}}</label>
                   <hr style="height:2px;border-width:2px;color:red;background-color:red">
                   {% if products.quantity > 0 %}
                       <label class="badge bg-success">In Stock</label>

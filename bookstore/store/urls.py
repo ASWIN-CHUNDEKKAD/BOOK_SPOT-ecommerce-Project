@@ -39,6 +39,7 @@ urlpatterns = [
     path('my-orders',order.index,name='myorders'),
     path('view-order/<str:t_no>',order.vieworder,name='orderview'),
     path('invoice/<str:t_no>',order.invoice,name='invoice'),
+    path('generate_pdf', order.generate_pdf, name='generate_pdf'),
     
     # Razorpay payment
     path('proceed-to-pay',checkout.razorpaycheck),

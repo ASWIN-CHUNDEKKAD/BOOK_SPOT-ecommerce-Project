@@ -14,7 +14,14 @@ class CustomUserForm(UserCreationForm):
         model = User
         fields = ['username','email','password1','password2']
         
-        
+
+    def clean_username(self):
+            username = self.cleaned_data['username']
+            
+            if not len(username)>4:
+                raise forms.ValidationError("Username is short")
+            return username
+
 # class Userform(User):
 #     class Meta:
 #         model = User

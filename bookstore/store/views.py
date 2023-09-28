@@ -7,8 +7,13 @@ from django.http.response import JsonResponse
 
 '''Function of website homepage'''
 def home(request):
-    banner = Banner.objects.all()
-    context = {'banner':banner}
+    # banner = Banner.objects.all()
+    # context = {'banner':banner}
+    trending_products = Product.objects.filter(trending=1)
+    context = {
+        'trending_products':trending_products
+    }
+    
     return render(request,'store/index.html',context)
 
 # def banner(request):

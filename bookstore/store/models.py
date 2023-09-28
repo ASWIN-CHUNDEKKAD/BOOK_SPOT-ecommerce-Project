@@ -33,7 +33,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     name = models.CharField(max_length=150,null=False,blank=False)
     product_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
-    small_description = models.CharField(max_length=200,null=False,blank=False)
+    small_description = models.TextField(max_length=1000,null=False,blank=False)
     language = models.CharField(max_length=50,null=False,blank=False)
     author = models.CharField(max_length=50,null=False,blank=False)
     quantity = models.IntegerField(null=False,blank=False)

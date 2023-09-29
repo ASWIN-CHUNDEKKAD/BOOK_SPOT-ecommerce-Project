@@ -37,6 +37,8 @@ $(document).ready(function () {
                         // "order_id": "order_9A33XWu170gUtm", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                         "handler": function (responseb){
                             alert(responseb.razorpay_payment_id);
+                            // alert(responseb.razorpay_order_id);
+                            // alert(responseb.razorpay_signature);
                             data = {
                                 "fname":fname,
                                 "lname":lname,

@@ -8,11 +8,11 @@
 <div class="container my-5">
     <div class="row">
       <div class="col-md-12">
-        <h1 class="text-center fst-italic">Trending</h1>
+        <h1 class="text-center fst-italic">Trending Products</h1>
         <hr style="height:2px;border-width:2px;color:red;background-color:red">
-        <div class="row">
+        <div class="row owl-carousel owl-theme">
           {% for item in trending_products %}
-          <div class="col-md-3 product_data">
+          <div class="product_data item">
             <br>
             <div class="card">
             <div class="card-body">
@@ -23,7 +23,8 @@
                   <h4 class="text-center fs-5">{{item.name}}</h4>
                 </a>
 
-                  <span class="float-start">{{ item.selling_price }}</span>
+                  <span class="float-start">M.R.P : <i class="fa fa-inr" aria-hidden="true"></i><s> {{ item.original_price }}</s></span>
+                  <span class="float-end"><i class="fa fa-inr" aria-hidden="true"></i> {{ item.selling_price }}</span>
                   <br>
                   <div class="row mt-2">
                     <div class="col-md-6">
@@ -38,9 +39,9 @@
                     <div class="col-md-6 px-0">
                       <span class="mb-2">
                         {% if item.quantity > 0 %}
-                          <button type="button" class="btn btn-primary btn-sm me-3  addToCartBtn">Add to Cart <i class="fa fa-shopping-cart"></i></button>
+                          <button type="button" class="btn btn-primary btn-sm me-3 py-2 addToCartBtn">Add to Cart <i class="fa fa-shopping-cart"></i></button>
                         {% else %}
-                        <button type="button" class="btn btn-danger btn-sm me-3 disabled  addToCartBtn">Out of Stock </button>
+                        <button type="button" class="btn btn-danger btn-sm me-3 disabled ">Out of Stock </button>
                         {% endif %}
                       </span>                      
                     </div>
@@ -56,4 +57,30 @@
   </div> 
 
 {% endblock content %}
+
+{% block scripts %}
+
+<script>
+  $('.owl-carousel').owlCarousel({
+    loop:true,
+    margin:10,
+    autoplay: true,
+    dots:false,
+    nav:true,
+    responsive:{
+        0:{
+            items:1
+        },
+        600:{
+            items:2
+        },
+        1000:{
+            items:4
+        }
+    }
+})
+</script>
+
+{% endblock scripts %}
+
     

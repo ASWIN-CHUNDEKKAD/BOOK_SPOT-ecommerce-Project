@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-from store.controller import authview, cart, wishlist,checkout,order
+from store.controller import authview, cart, wishlist,checkout,order,pdf
 
 urlpatterns = [
     # homepage,category
@@ -39,6 +39,8 @@ urlpatterns = [
     path('my-orders',order.index,name='myorders'),
     path('view-order/<str:t_no>',order.vieworder,name='orderview'),
     path('invoice/<str:t_no>',order.invoice,name='invoice'),
+    
+    # Generation of pdf
     path('generate_pdf', order.generate_pdf, name='generate_pdf'),
     
     # Razorpay payment

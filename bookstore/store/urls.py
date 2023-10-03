@@ -41,7 +41,7 @@ urlpatterns = [
     path('invoice/<str:t_no>',order.invoice,name='invoice'),
     
     # Generation of pdf
-    path('generate_pdf', order.generate_pdf, name='generate_pdf'),
+    path('generate_pdf/<str:t_no>', order.generate_pdf, name='generate_pdf'),
     
     # Razorpay payment
     path('proceed-to-pay',checkout.razorpaycheck),

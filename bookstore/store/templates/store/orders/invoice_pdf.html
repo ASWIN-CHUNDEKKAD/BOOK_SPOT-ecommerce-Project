@@ -67,16 +67,11 @@
                 </address>
             </div>
             <div>
-                <h2>Invoice-Details</h2>
-                
-                <address>
-                    <strong>Order id : </strong>{{ order.tracking_no }}<br>
-                    <strong>Payment Mode : </strong>{{ order.payment_mode }}<br>
-                    <strong>Transaction id : </strong>{{ order.payment_id }}<br>
-                    <strong>Order Date : </strong>{{ order.created_at }}<br>
-                    
-                </address>
-                
+                <h2>Invoice-Details</h2>             
+                <strong>Order id       : </strong>{{ order.tracking_no }}<br>
+                <strong>Payment Mode   : </strong>{{ order.payment_mode }}<br>
+                <strong>Transaction id : </strong>{{ order.payment_id }}<br>
+                <strong>Order Date     : </strong>{{ order.created_at }}<br>
             </div>
         </div>
         <table class="invoice-table">
@@ -84,7 +79,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Quantity</th>
-                    <th>Prize</th>
+                    <th> Unit Prize</th>
                 </tr>
             </thead>
             <tbody>

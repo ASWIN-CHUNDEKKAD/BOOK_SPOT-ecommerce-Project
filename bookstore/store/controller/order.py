@@ -54,13 +54,14 @@ def invoice_pdf(template_source, context_dict={}):
     pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding="utf-8", pagesize="A4", pagebreaks=False)
     if not pdf.err:
         response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+        # response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
         response.write(result.getvalue())
         return response
     return HttpResponse("PDF generation failed", content_type="text/plain")
 
-def generate_pdf(request):
-    order = Order.objects.filter(user=request.user).first()
+def generate_pdf(request,t_no):
+    # order = Order.objects.filter(user=request.user).first()
+    order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order)
     
     context = {

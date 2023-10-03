@@ -14,7 +14,7 @@
 	<br>
 	<div class="text-center">
 		<a href="{% url 'category' %}" class="btn btn-success"><i class="fa fa-cart-plus" aria-hidden="true"></i> Shop more</a>
-		<a href="{% url "generate_pdf" %}" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download Invoice</a>
+		<a href="{% url 'generate_pdf' t_no=order.tracking_no %}" class="btn btn-success"><i class="fa fa-download" aria-hidden="true"></i> Download Invoice</a>
 	</div>
 </div>
 

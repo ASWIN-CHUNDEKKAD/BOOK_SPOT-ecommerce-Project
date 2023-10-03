@@ -28,10 +28,8 @@
                   </div>
                   <hr style="height:2px;border-width:2px;color:red;background-color:red">
                   <h4 class="text-center">{{item.name}}</h4>
-                  <h6>original price</h6>
-                  <span class="float-start"><i class="fa fa-inr" aria-hidden="true"></i> {{item.original_price}}</span><br>
-                  <h6>selling price</h6>
-                  <span class="float-start"><i class="fa fa-inr" aria-hidden="true"></i> {{item.selling_price}}</span>
+                  <span class="float-start">M.R.P : <i class="fa fa-inr" aria-hidden="true"></i><s> {{ item.original_price }}</s></span>
+                  <span class="float-end"><i class="fa fa-inr" aria-hidden="true"></i> {{ item.selling_price }}</span>
                 </div>
 
               </a>

@@ -8,11 +8,11 @@
       </button>
 
       
-      <div class="search-bar">
+      <div class="search-bar border border-dark">
         <form action="{% url 'searchproduct' %}" method="POST">
           {% csrf_token %}
           <div class="input-group">
-            <input type="search" required class="form-control" name='productsearch' id="searchproducts" placeholder="search books">
+            <input type="search" required class="form-control" name='productsearch' id="searchproducts" placeholder="Search Books.....">
             <button type="submit" class="input-group-text"><i class="fa fa-search"></i></button>
           </div>
         </form>

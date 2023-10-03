@@ -1,108 +1,108 @@
-{% comment %} <div class="container" style="margin: 0 auto;width: 50%;padding: 50px;background: #f1f1f1;margin-top: 25px;margin-bottom: 50px;">
-    <div class="row invoice row-printable">
-        <div class="col-md-12">
-            <!-- col-lg-12 start here -->
-            <div class="panel panel-default plain" id="dash_0">
-                <!-- Start .panel -->
-                <div class="panel-body p30">
-                    <div class="row">
-                        <!-- Start .row -->
-                        <div class="col-lg-6">
-                            <!-- col-lg-6 start here -->
-                            <h3>BOOK SPOT</h3>
-                        </div>
-                        <!-- col-lg-6 end here -->
-                        <div class="col-lg-6">
-                            <!-- col-lg-6 start here -->
-                            <div class="invoice-from">
-                                <ul class="list-unstyled text-right">
-                                    <li><strong>Invoiced To</strong></li><hr>
-                                    <li>{{ order.fname }} {{ order.lname }}</li>
-                                    <li>{{ order.address }}</li>
-                                    <li>{{ order.city }}</li>
-                                    <li>{{ order.state }}</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- col-lg-6 end here -->
-                        <div class="col-lg-12">
-                            <!-- col-lg-12 start here -->
-                            <div class="invoice-details mt25">
-                                <div class="well">
-                                    <ul class="list-unstyled mb0">
-                                        <li><strong>Order id : </strong>{{ order.tracking_no }}</li>
-                                        <li><strong>Payment Mode : </strong>{{ order.payment_mode }}</li>
-                                        <li><strong>Transaction id : </strong>{{ order.payment_id }}</li>
-                                        <li><strong>Order Date : </strong>{{ order.created_at }}</li>
-                                        
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                           
-                            <div class="invoice-items">
-                                <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="per70 text-center">Name</th>
-                                                <th class="per5 text-center">Qty</th>
-                                                <th class="per25 text-center">Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for item in orderitems %}
-                                                <tr>
-                                                    <td>{{ item.product.name }}</td>
-                                                    <td class="text-center">{{ item.quantity }}</td>
-                                                    <td class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ item.price }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th colspan="2" class="text-right">Grand Total : </th>
-                                                <th class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="invoice-footer mt25">
-                                <p class="text-center">Thank you for shopping with us!</p>
-                            </div>
-                        </div>
-                        <!-- col-lg-12 end here -->
-                    </div>
-                    <!-- End .row -->
-                </div>
-            </div>
-            <!-- End .panel -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .invoice {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+        }
+        .invoice-details div {
+            width: 50%;
+        }
+        .invoice-details h2 {
+            margin: 0;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .invoice-table th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="header">
+            <h1>BOOK SPOT</h1>
         </div>
-        <!-- col-lg-12 end here -->
+        <div class="invoice-details">
+            <div>
+                <h2>Invoice To: </h2>
+                <address>
+                    {{ order.fname }} {{ order.lname }}<br><br>
+                    {{ order.address }}<br>
+                    {{ order.city }}<br>
+                    {{ order.state }}<br>
+                </address>
+            </div>
+            <div>
+                <h2>Invoice-Details</h2>
+                
+                <address>
+                    <strong>Order id : </strong>{{ order.tracking_no }}<br>
+                    <strong>Payment Mode : </strong>{{ order.payment_mode }}<br>
+                    <strong>Transaction id : </strong>{{ order.payment_id }}<br>
+                    <strong>Order Date : </strong>{{ order.created_at }}<br>
+                    
+                </address>
+                
+            </div>
+        </div>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Prize</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for item in orderitems %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="total">
+            Total: {{ order.total_price }}
+        </div>
     </div>
-    </div> {% endcomment %}
+</body>
+</html>
 
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-
-        <style>
-            @page{
-                size: "A4";
-                margin: 2.5cm 1.5cm 3.5cm 1.5cm;
-
-                @top-center{
-                    content: "Company N"
-                }
-            }
-        </style>
-    </head>
-    <body>
-        hello world
-    </body>
-    </html>

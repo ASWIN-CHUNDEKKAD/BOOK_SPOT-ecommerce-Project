@@ -102,10 +102,10 @@ class CustomUserAdmin(UserAdmin):
 
     actions = [download_selected_pdf]
 admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
 
 
 # Register your models here.
+admin.site.register(User, CustomUserAdmin)
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product,ProductAdmin)

@@ -58,37 +58,46 @@ generate_pdf.short_description = "Download selected items as PDF."
 
 
 # FUNCTION OF GENERATING EXCEL REPORT IN ADMIN SIDE
-def download_excel(modeladmin,request,queryset):
+def download_excel(modeladmin, request, queryset):
     model_name = modeladmin.model.__name__
     response = HttpResponse(content_type='application/vnd.openxmlformats-officdocument.spreadsheettml.sheet')
     response['Content-Disposition'] = f'attachment; filename={model_name}.xlsx'
-    
+
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet()
-    
+
     headers = [field.verbose_name for field in modeladmin.model._meta.fields]
-    for col_num, header in  enumerate(headers):
+
+    # Add a header for the serial number column
+    headers.insert(0, 'Serial Number')
+
+    for col_num, header in enumerate(headers):
         worksheet.write(0, col_num, header)
-        
+
     for row_num, obj in enumerate(queryset, 1):
-        for col_num,field in enumerate(modeladmin.model._meta.fields):
+        for col_num, field in enumerate(modeladmin.model._meta.fields):
             value = str(getattr(obj, field.name))
-            worksheet.write(row_num, col_num, value)
+            worksheet.write(row_num, col_num + 1, value)  # +1 to skip the serial number column
+
+        # Add the serial number to the first column
+        worksheet.write(row_num, 0, row_num)
+
     workbook.close()
     return response
 
-actions = [download_excel]
+download_excel.short_description = "Download selected items as Excel."
+
 
 
 # CATEGORY
 class CategoryAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
-        # Define the fields you want to include in the PDF
+        # Defining the fields that want to include in the PDF
         fields_to_include = ['id', 'name']
         return generate_pdf(self, request, queryset, fields_to_include)
     
-    actions = [download_selected_pdf]
+    actions = [download_selected_pdf, download_excel]
     
     
 # PRODUCTS
@@ -99,7 +108,7 @@ class ProductAdmin(admin.ModelAdmin):
         fields_to_include = ['id', 'name','language','author','quantity']
         return generate_pdf(self, request, queryset, fields_to_include)
 
-    actions = [download_selected_pdf]
+    actions = [download_selected_pdf, download_excel]
     
 # ORDER
 class OrderAdmin(admin.ModelAdmin):
@@ -109,7 +118,7 @@ class OrderAdmin(admin.ModelAdmin):
         fields_to_include = ['id', 'fname','lname','phone','address','state','payment_mode','payment_id']
         return generate_pdf(self, request, queryset, fields_to_include)
 
-    actions = [download_selected_pdf]
+    actions = [download_selected_pdf, download_excel]
     
 # ORDER ITEMS
 class OrderitemAdmin(admin.ModelAdmin):
@@ -119,9 +128,9 @@ class OrderitemAdmin(admin.ModelAdmin):
         fields_to_include = ['id', 'order','product','price','quantity']
         return generate_pdf(self, request, queryset, fields_to_include)
 
-    actions = [download_selected_pdf]
+    actions = [download_selected_pdf, download_excel]
 
-# USERS [ FOR THIS FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]
+# USERS [ FOR THIS, FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]
 class CustomUserAdmin(UserAdmin):
     
     def download_selected_pdf(self, request, queryset):
@@ -129,7 +138,7 @@ class CustomUserAdmin(UserAdmin):
         fields_to_include = ['id', 'username', 'first_name', 'last_name', 'email']
         return generate_pdf(self, request, queryset, fields_to_include)
 
-    actions = [download_selected_pdf]
+    actions = [download_selected_pdf, download_excel]
     
 admin.site.unregister(User)
 

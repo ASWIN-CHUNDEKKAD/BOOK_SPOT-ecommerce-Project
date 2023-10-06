@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from store.models import Cart,Order,Orderitem,Product,Profile
 from django.contrib.auth.models import User
 import random
+from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 # from django.core.mail import EmailMessage
 # from django.template.loader import render_to_string
 
@@ -123,15 +124,29 @@ def placeorder(request):
     return redirect('/')
 
 
+# def razorpaycheck(request):
+#     cart = Cart.objects.filter(user=request.user)
+#     # TODO:REMOVE FOR LOOP AND IMPLEMENT TOTAL PRICE LOGIC USING DATABASE
+#     total_price = 0
+#     for item in cart:
+#         total_price = total_price + item.product.selling_price * item.product_qty
+        
+#     return JsonResponse({
+#         'total_price':total_price
+#     })
+
+
 '''Rozorpay function'''
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
-    cart = Cart.objects.filter(user=request.user)
-    # TODO:REMOVE FOR LOOP AND IMPLEMENT TOTAL PRICE LOGIC USING DATABASE
-    total_price = 0
-    for item in cart:
-        total_price = total_price + item.product.selling_price * item.product_qty
-        
-    return JsonResponse({
-        'total_price':total_price
-    })
+    # Calculation of the total_price using database aggregation
+    total_price = Cart.objects.filter(user=request.user).aggregate(
+        total_price=Sum(
+            ExpressionWrapper(
+                F('product__selling_price') * F('product_qty'),
+                output_field=DecimalField()
+            )
+        )
+    )['total_price'] or 0
+
+    return JsonResponse({'total_price': total_price})

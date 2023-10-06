@@ -20,6 +20,7 @@ from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 '''function of order page ,in this page order history displayed'''
 def index(request):
     orders = Order.objects.filter(user=request.user)
+    orders = list(reversed(orders))
     context = {
         'orders':orders
         }

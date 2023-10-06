@@ -45,4 +45,5 @@ urlpatterns = [
     
     # Razorpay payment
     path('proceed-to-pay',checkout.razorpaycheck),
+    
 ]

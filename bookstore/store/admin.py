@@ -3,12 +3,17 @@ from . models import *
 from django.http import HttpResponse
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 # REPORT LAB LIBRARIES FOR GENERATING PDF
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame, Table
+from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame, Table, SimpleDocTemplate, Paragraph
 from reportlab.platypus.tables import TableStyle
-
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from collections import Counter
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 # FOR EXCEL REPORT
 import xlsxwriter
 
@@ -30,6 +35,10 @@ def generate_pdf(modeladmin, request, queryset, fields_to_include):
     doc.addPageTemplates([template])
 
     elements = []
+    
+    title_style = getSampleStyleSheet()['Title']
+    title =Paragraph("Report", style=title_style)
+    elements.append(title)
 
     data = [['S.No'] + [modeladmin.model._meta.get_field(field_name).verbose_name for field_name in fields_to_include]]
 
@@ -89,6 +98,57 @@ download_excel.short_description = "Download selected items as Excel."
 
 
 
+# FUNCTION OF GENERATING SALES REPORT
+def generate_sales_report_with_top_products(modeladmin, request, queryset):
+    model_name = modeladmin.model.__name__
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename={model_name}_sales_report.pdf'
+
+    # Creation of landscape A4-sized PDF document
+    doc = BaseDocTemplate(response, pagesize=landscape(letter))
+
+    # Creation of PageTemplate with a single Frame
+    frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height)
+    template = PageTemplate(frames=[frame])
+
+    # Adding the PageTemplate to the document
+    doc.addPageTemplates([template])
+
+    elements = []
+
+    title_style = getSampleStyleSheet()['Title']
+    title = Paragraph("Sales Report with Top Products", style=title_style)
+    elements.append(title)
+
+    # Retrieve the top-selling products
+    top_selling_products = Orderitem.objects.values('product__name').annotate(
+        total_quantity_sold=Coalesce(Sum('quantity'), 0)
+    ).order_by('-total_quantity_sold')[:10]  # Change 10 to the desired number of top products
+
+    # Create a table to display the top-selling products
+    top_products_data = [['Product', 'Quantity Sold']]
+    for product in top_selling_products:
+        top_products_data.append([product['product__name'], product['total_quantity_sold']])
+
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),  # Background color for the header row
+        ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),  # Text color for the header row
+        ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),  # Border for all cells
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center alignment for all cells
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Middle vertical alignment for all cells
+    ])
+
+    top_products_table = Table(top_products_data)
+    top_products_table.setStyle(table_style)
+
+    elements.append(top_products_table)
+
+    doc.build(elements)
+    return response
+
+generate_sales_report_with_top_products.short_description = "Download Sales Report with Top Products"
+
+
 # CATEGORY
 class CategoryAdmin(admin.ModelAdmin):
     
@@ -120,6 +180,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     actions = [download_selected_pdf, download_excel]
     
+    
 # ORDER ITEMS
 class OrderitemAdmin(admin.ModelAdmin):
     
@@ -128,7 +189,7 @@ class OrderitemAdmin(admin.ModelAdmin):
         fields_to_include = ['id', 'order','product','price','quantity']
         return generate_pdf(self, request, queryset, fields_to_include)
 
-    actions = [download_selected_pdf, download_excel]
+    actions = [download_selected_pdf, download_excel, generate_sales_report_with_top_products]
 
 # USERS [ FOR THIS, FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]
 class CustomUserAdmin(UserAdmin):
@@ -139,6 +200,8 @@ class CustomUserAdmin(UserAdmin):
         return generate_pdf(self, request, queryset, fields_to_include)
 
     actions = [download_selected_pdf, download_excel]
+    
+    
     
 admin.site.unregister(User)
 

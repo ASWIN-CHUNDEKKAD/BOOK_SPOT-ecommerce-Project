@@ -7,18 +7,16 @@ from django.db.models import Sum
 
 # REPORT LAB LIBRARIES FOR GENERATING PDF
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame, Table, SimpleDocTemplate, Paragraph
+from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame, Table, Paragraph
 from reportlab.platypus.tables import TableStyle
-from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
-from collections import Counter
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 # FOR EXCEL REPORT
 import xlsxwriter
 
 
-# FUNCTION OF GENERATING PDF IN ADMIN SIDE
+'''FUNCTION OF GENERATING PDF IN ADMIN SIDE'''
 def generate_pdf(modeladmin, request, queryset, fields_to_include):
     model_name = modeladmin.model.__name__
     response = HttpResponse(content_type='application/pdf')
@@ -66,7 +64,7 @@ def generate_pdf(modeladmin, request, queryset, fields_to_include):
 generate_pdf.short_description = "Download selected items as PDF."
 
 
-# FUNCTION OF GENERATING EXCEL REPORT IN ADMIN SIDE
+'''FUNCTION OF GENERATING EXCEL REPORT IN ADMIN SIDE'''
 def download_excel(modeladmin, request, queryset):
     model_name = modeladmin.model.__name__
     response = HttpResponse(content_type='application/vnd.openxmlformats-officdocument.spreadsheettml.sheet')
@@ -77,7 +75,7 @@ def download_excel(modeladmin, request, queryset):
 
     headers = [field.verbose_name for field in modeladmin.model._meta.fields]
 
-    # Add a header for the serial number column
+    # Adding  header for the serial number column
     headers.insert(0, 'Serial Number')
 
     for col_num, header in enumerate(headers):
@@ -88,7 +86,7 @@ def download_excel(modeladmin, request, queryset):
             value = str(getattr(obj, field.name))
             worksheet.write(row_num, col_num + 1, value)  # +1 to skip the serial number column
 
-        # Add the serial number to the first column
+        # Adding the serial number to the first column
         worksheet.write(row_num, 0, row_num)
 
     workbook.close()
@@ -98,7 +96,7 @@ download_excel.short_description = "Download selected items as Excel."
 
 
 
-# FUNCTION OF GENERATING SALES REPORT
+'''FUNCTION OF GENERATING SALES REPORT'''
 def generate_sales_report_with_top_products(modeladmin, request, queryset):
     model_name = modeladmin.model.__name__
     response = HttpResponse(content_type='application/pdf')
@@ -149,7 +147,7 @@ def generate_sales_report_with_top_products(modeladmin, request, queryset):
 generate_sales_report_with_top_products.short_description = "Download Sales Report with Top Products"
 
 
-# CATEGORY
+'''CATEGORY ADMIN'''
 class CategoryAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
@@ -160,7 +158,7 @@ class CategoryAdmin(admin.ModelAdmin):
     actions = [download_selected_pdf, download_excel]
     
     
-# PRODUCTS
+'''PRODUCTS ADMIN'''
 class ProductAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
@@ -170,7 +168,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     actions = [download_selected_pdf, download_excel]
     
-# ORDER
+'''ORDER ADMIN'''
 class OrderAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
@@ -181,7 +179,7 @@ class OrderAdmin(admin.ModelAdmin):
     actions = [download_selected_pdf, download_excel]
     
     
-# ORDER ITEMS
+'''ORDER ITEMS ADMIN'''
 class OrderitemAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
@@ -205,7 +203,7 @@ class CustomUserAdmin(UserAdmin):
     
 admin.site.unregister(User)
 
-# Register your models here.
+'''Register your models here.'''
 admin.site.register(User, CustomUserAdmin)
 
 admin.site.register(Category, CategoryAdmin)

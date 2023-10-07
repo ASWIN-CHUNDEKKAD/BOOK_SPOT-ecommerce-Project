@@ -34,11 +34,13 @@ def addtocart(request):
 '''viewcart page function'''
 @login_required(login_url='loginpage')
 def viewcart(request):
+# TODO: REF PREFETCH RELATED AND SELECT RELATED FOR ORM OPTIMIZATION
+# INSTALL DJANGO DEBUGG TOOLBAR PACKAGE 
     cart = Cart.objects.filter(user=request.user)
     context = {'cart' : cart}
     return render(request,'store/cart.html',context)
-            
-'''product qty increment function'''          
+      
+'''PRODUCT QUANTITY INCREMENT FUNCTION'''          
 def updatecart(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
@@ -50,7 +52,7 @@ def updatecart(request):
         return JsonResponse({'status' : 'Updated Successfully'})
     return redirect('/')
 
-'''delete cart function'''
+'''DELETe CART FUNCTION'''
 def deletecartitem(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))

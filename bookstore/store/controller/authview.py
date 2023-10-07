@@ -5,7 +5,7 @@ from store.forms import CustomUserForm
 from django.http import HttpResponse
 
 
-'''user registration'''
+'''USER REGISTRATION'''
 def register(request):
     if request.user.is_authenticated:
         messages.warning(request,"You are Logged in")
@@ -21,7 +21,7 @@ def register(request):
         context = {'form':form}
         return render(request,'store/auth/register.html',context)
 
-'''Login page functionality'''
+'''LOGIN PAGE FUNCTIONALITY'''
 def loginpage(request):
     if request.user.is_authenticated:
         messages.warning(request,"You are Logged in")
@@ -44,13 +44,13 @@ def loginpage(request):
         return render(request,'store/auth/login.html')
     
     
-'''Logout'''
+'''LOGOUT'''
 def logoutpage(request):
     if request.user.is_authenticated:
         logout(request)
         messages.success(request,"Logout Successfully")
     return redirect('home')
 
-'''edit profile functionality'''
+'''EDIT PROFILE FUNCTIONALITY'''
 def edit_profile(request):
     return render(request,'store/auth/edit_profile.html')

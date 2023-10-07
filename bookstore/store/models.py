@@ -86,9 +86,6 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    # def __str__(self):
-    #     return '{} - {}'.format(self.id,self.tracking_no)
-    
     def __str__(self):
         return self.user.username
     
@@ -99,8 +96,6 @@ class Orderitem(models.Model):
     price = models.FloatField(null=False)
     quantity = models.IntegerField(null=False)
     
-    # def __str__(self):
-    #     return '{} {}' .format(self.order.id,self.order.tracking_no)
     
     def __str__(self):
         return self.order.fname

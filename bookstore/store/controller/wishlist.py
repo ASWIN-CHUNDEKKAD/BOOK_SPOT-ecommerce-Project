@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from store.models import Wishlist,Product
 
-'''wishlist page functionality'''
+'''WISHLIST PAGE FUNCTIONALITY'''
 @login_required(login_url='loginpage')
 def index(request):
     wishlist = Wishlist.objects.filter(user=request.user)
@@ -13,7 +13,7 @@ def index(request):
     return render(request,'store/wishlist.html',context)
 
 
-'''add to wishlist'''
+'''ADD TO WISHLIST'''
 def addtowishlist(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -32,7 +32,7 @@ def addtowishlist(request):
                                       
     return redirect('/')
 
-'''delete wishlist'''
+'''DELETe FUNCTIONALITY'''
 def deletewishlistitem(request):
     if request.method == 'POST':
         if request.user.is_authenticated:

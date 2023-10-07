@@ -9,14 +9,13 @@ from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 # from django.core.mail import EmailMessage
 # from django.template.loader import render_to_string
 
-'''checkout page function '''
+'''CHECKOUT PAGE FUNCTION '''
 @login_required(login_url='loginpage')
 def index(request):
     rowcart = Cart.objects.filter(user=request.user)
     for item in rowcart:
         if item.product_qty > item.product.quantity:
             Cart.objects.delete(id=item.id)
-            # return JsonResponse({'status' : 'no such qty'})
             
     cartitems = Cart.objects.filter(user=request.user)
     total_price = 0
@@ -32,7 +31,7 @@ def index(request):
             }
     return render(request,'store/checkout.html',context)
 
-'''placeorder functionality'''
+'''PLACEORDER FUNCTION'''
 @login_required(login_url='loginpage')
 def placeorder(request):
     if request.method == "POST":
@@ -136,7 +135,7 @@ def placeorder(request):
 #     })
 
 
-'''Rozorpay function'''
+'''RAZORPAY FUNCTION'''
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
     # Calculation of the total_price using database aggregation

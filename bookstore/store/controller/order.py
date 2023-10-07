@@ -17,7 +17,7 @@ from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 # import tempfile
 
 
-'''function of order page ,in this page order history displayed'''
+'''FUNCTION OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED'''
 def index(request):
     orders = Order.objects.filter(user=request.user)
     orders = list(reversed(orders))
@@ -26,7 +26,7 @@ def index(request):
         }
     return render(request,'store/orders/index.html',context)
 
-'''Detailes of each order'''
+'''DETAILES OF EACH ORDER'''
 def vieworder(request,t_no):
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order)
@@ -36,7 +36,7 @@ def vieworder(request,t_no):
         }
     return render(request,'store/orders/view.html',context)
 
-'''invoice'''
+'''INVOICE'''
 def invoice(request,t_no):
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order)
@@ -60,6 +60,7 @@ def invoice_pdf(template_source, context_dict={}):
         return response
     return HttpResponse("PDF generation failed", content_type="text/plain")
 
+# CONTEXT PASSING IN GENERATED PDF
 def generate_pdf(request,t_no):
     # order = Order.objects.filter(user=request.user).first()
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()

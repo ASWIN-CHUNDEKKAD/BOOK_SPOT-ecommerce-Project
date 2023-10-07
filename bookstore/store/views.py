@@ -9,6 +9,8 @@ from django.http.response import JsonResponse
 def home(request):
     # banner = Banner.objects.all()
     # context = {'banner':banner}
+    
+    # TODO: CACHE GENERAL DATAS AND REUSED, USE SIGNALS TO INVALIDATE CACHE DATA FOR CRUD OPERATIONS
     trending_products = Product.objects.filter(trending=1)
     context = {
         'trending_products':trending_products
@@ -16,10 +18,10 @@ def home(request):
     
     return render(request,'store/index.html',context)
 
-# def banner(request):
-#     banner = Banner.objects.all()
-#     context = {'banner':banner}
-#     return render(request,'store/index.html',context)
+def banner(request):
+    banner = Banner.objects.all()
+    context = {'banner':banner}
+    return render(request,'store/includes/slider.html',context)
 
 '''Category of books(fiction,non-fiction,...)'''
 def category(request):

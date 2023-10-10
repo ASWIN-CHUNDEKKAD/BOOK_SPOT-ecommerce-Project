@@ -161,6 +161,7 @@ generate_sales_report_with_top_products.short_description = "Download Sales Repo
 class CategoryAdmin(admin.ModelAdmin):
     search_fields = Category.searchablefields
     
+    
     def download_selected_pdf(self, request, queryset):
         # Defining the fields that want to include in the PDF
         fields_to_include = ['id', 'name']
@@ -172,6 +173,8 @@ class CategoryAdmin(admin.ModelAdmin):
 '''PRODUCTS ADMIN'''
 class ProductAdmin(admin.ModelAdmin):
     search_fields = Product.searchablefields
+    list_display = ['name','language','author','category']
+    list_filter = ['category','language','author','trending']
     
     def download_selected_pdf(self, request, queryset):
         # FIELDS THAT INCLUDES IN PDF

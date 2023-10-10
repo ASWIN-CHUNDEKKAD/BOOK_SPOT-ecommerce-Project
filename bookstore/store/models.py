@@ -24,6 +24,7 @@ class Category(models.Model):
     status = models.BooleanField(default=False,help_text="0=default,1=Hidden")
     trending = models.BooleanField(default=False,help_text="0=default,1=Trending")
     created_at = models.DateTimeField(auto_now_add=True)
+    searchablefields = ['name']
     
     def __str__(self):
         return self.name
@@ -42,6 +43,7 @@ class Product(models.Model):
     status = models.BooleanField(default=False,help_text="0=default,1=Hidden")
     trending = models.BooleanField(default=False,help_text="0=default,1=Trending")
     created_at = models.DateTimeField(auto_now_add=True)
+    searchablefields = ['name','language']
     
     def __str__(self):
         return self.name
@@ -85,6 +87,8 @@ class Order(models.Model):
     tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    searchablefields = ['fname','lname','email','state']
+    
     
     def __str__(self):
         return self.user.username

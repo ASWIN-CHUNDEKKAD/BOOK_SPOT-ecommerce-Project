@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Sum, F, ExpressionWrapper, FloatField
+from rangefilter.filter import DateRangeFilter
 
 # REPORT LAB LIBRARIES FOR GENERATING PDF
 from reportlab.lib.pagesizes import letter, landscape
@@ -96,7 +97,7 @@ download_excel.short_description = "Download selected items as Excel."
 
 
 
-'''FUNCTION OF GENERATING SALES REPORT'''
+'''FUNCTION OF GENERATING SALES REPORT WITH TOP PRODUCTS AND TOTAL INCOME'''
 def generate_sales_report_with_top_products(modeladmin, request, queryset):
     model_name = modeladmin.model.__name__
     response = HttpResponse(content_type='application/pdf')
@@ -161,7 +162,6 @@ generate_sales_report_with_top_products.short_description = "Download Sales Repo
 class CategoryAdmin(admin.ModelAdmin):
     search_fields = Category.searchablefields
     
-    
     def download_selected_pdf(self, request, queryset):
         # Defining the fields that want to include in the PDF
         fields_to_include = ['id', 'name']
@@ -184,11 +184,28 @@ class ProductAdmin(admin.ModelAdmin):
     actions = [download_selected_pdf, download_excel]
     
 '''ORDER ADMIN'''
+orderstatuses = (
+        ('Pending','Pending'),
+        ('Out for shipping','Out for shipping'),
+        ('Completed','Completed'),
+    )
+
 class OrderAdmin(admin.ModelAdmin):
     search_fields = Order.searchablefields
+    list_display = ['fname','lname','email','state','country','payment_mode','get_status_display','created_at']
+    list_filter = (
+        ('created_at', DateRangeFilter),# Adding DateRangeFilter for 'created_at' field
+        'fname',
+        'lname',
+        'state',
+    )
+    # METHOD TO DISPLAY STATUS
+    def get_status_display(self, obj):
+        return dict(orderstatuses).get(obj.status, obj.status)
+    get_status_display.short_description = 'Status'
     
     def download_selected_pdf(self, request, queryset):
-        # Define the fields you want to include in the PDF
+        # Defining the fields that include in the PDF
         fields_to_include = ['id', 'fname','lname','phone','address','state','payment_mode','payment_id']
         return generate_pdf(self, request, queryset, fields_to_include)
 
@@ -199,7 +216,7 @@ class OrderAdmin(admin.ModelAdmin):
 class OrderitemAdmin(admin.ModelAdmin):
     
     def download_selected_pdf(self, request, queryset):
-        # Define the fields you want to include in the PDF
+        # Defining the fields that include in the PDF
         fields_to_include = ['id', 'order','product','price','quantity']
         return generate_pdf(self, request, queryset, fields_to_include)
 

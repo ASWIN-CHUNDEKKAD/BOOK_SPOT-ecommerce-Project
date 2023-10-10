@@ -3,7 +3,7 @@ from . models import *
 from django.http import HttpResponse
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Sum, F, ExpressionWrapper, FloatField
 
 # REPORT LAB LIBRARIES FOR GENERATING PDF
 from reportlab.lib.pagesizes import letter, landscape
@@ -119,14 +119,22 @@ def generate_sales_report_with_top_products(modeladmin, request, queryset):
     elements.append(title)
 
     # Retrieve the top-selling products
-    top_selling_products = Orderitem.objects.values('product__name').annotate(
-        total_quantity_sold=Coalesce(Sum('quantity'), 0)
+    top_selling_products = queryset.values('product__name').annotate(
+        total_quantity_sold=Coalesce(Sum('quantity'), 0),
+        total_amount_sold=ExpressionWrapper(
+            F('price') * F('total_quantity_sold'),
+            output_field=FloatField()  # Use FloatField for the total amount
+        )
     ).order_by('-total_quantity_sold')[:10]  # Change 10 to the desired number of top products
 
     # Create a table to display the top-selling products
-    top_products_data = [['Product', 'Quantity Sold']]
+    top_products_data = [['Product', 'Quantity Sold', 'Total Amount']]
     for product in top_selling_products:
-        top_products_data.append([product['product__name'], product['total_quantity_sold']])
+        top_products_data.append([
+            product['product__name'],
+            product['total_quantity_sold'],
+            'RS {:.2f}'.format(product['total_amount_sold'])  # Format total amount as currency
+        ])
 
     table_style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),  # Background color for the header row
@@ -135,6 +143,9 @@ def generate_sales_report_with_top_products(modeladmin, request, queryset):
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center alignment for all cells
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Middle vertical alignment for all cells
     ])
+
+    # Add column alignment for the "Total Amount" column
+    table_style.add('ALIGN', (-1, 0), (-1, -1), 'RIGHT')
 
     top_products_table = Table(top_products_data)
     top_products_table.setStyle(table_style)
@@ -145,7 +156,6 @@ def generate_sales_report_with_top_products(modeladmin, request, queryset):
     return response
 
 generate_sales_report_with_top_products.short_description = "Download Sales Report with Top Products"
-
 
 '''CATEGORY ADMIN'''
 class CategoryAdmin(admin.ModelAdmin):

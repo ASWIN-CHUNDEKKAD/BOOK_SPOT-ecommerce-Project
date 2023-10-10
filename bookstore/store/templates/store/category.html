@@ -7,9 +7,7 @@
     <div class="container">
       <a class="{% if request.resolver_match.url_name == 'home' %}text-white active {% else %}text-dark active{% endif %}" href="{% url 'home' %}">Home /</a>
       <a class="{% if request.resolver_match.url_name == 'category' %}text-white active {% else %}text-dark active{% endif %}" href="{% url 'category' %}">category</a>
-
     </div>
-
   </div>
 
   <div class="container">
@@ -28,21 +26,14 @@
                     <img src="{{item.image.url}}" alt="category-image" class="w-100" height=150px,width=150px>
                   </div>
                   <h4 class="text-center">{{item.name}}</h4>
-                </div>
-
+                </div> 
               </a>
-
             </div>
-
           </div>
           {% endfor %}
-
         </div>
-
       </div>
-
     </div>
-
   </div> 
 
 {% endblock content %}

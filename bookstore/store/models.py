@@ -113,6 +113,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
     
+class Category_slider(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=False)
+    image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
+
+    def __str__(self):
+        return self.name
     
     

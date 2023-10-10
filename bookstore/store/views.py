@@ -1,35 +1,29 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . models import Category,Product,Banner
+from . models import Category,Product,Banner,Category_slider
 from django.http.response import JsonResponse
 
 # Create your views here.
 
-'''Function of website homepage'''
+'''FUNCTION OF HOMEPAGE OF THE WEBSITE'''
 def home(request):
-    # banner = Banner.objects.all()
-    # context = {'banner':banner}
     
     # TODO: CACHE GENERAL DATAS AND REUSED, USE SIGNALS TO INVALIDATE CACHE DATA FOR CRUD OPERATIONS
     trending_products = Product.objects.filter(trending=1)
+    cate_slider = Category_slider.objects.all()
     context = {
-        'trending_products':trending_products
+        'trending_products':trending_products,
+        'cate_slider':cate_slider
     }
-    
     return render(request,'store/index.html',context)
 
-def banner(request):
-    banner = Banner.objects.all()
-    context = {'banner':banner}
-    return render(request,'store/includes/slider.html',context)
-
-'''Category of books(fiction,non-fiction,...)'''
+'''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
 def category(request):
     category = Category.objects.filter(status=0)
     context = {'category':category}
     return render(request,'store/category.html',context)
 
-'''Each category there are several books,This function represents the filteration of products by category'''
+'''EACH CATEGORY THERE ARE SEVERAL BOOKS,THIS FUNCTION REPRESENTS THE FILTERATION BY CATEGORY'''
 def categoryview(request,name):
     if(Category.objects.filter(name=name,status=0)):                
         products = Product.objects.filter(category__name=name,status=0)
@@ -41,7 +35,7 @@ def categoryview(request,name):
         return redirect('category')
     
     
-'''Detail view of each product'''
+'''DETAIL VIEW OF EACH PRODUCT'''
 def productview(request,cate_name,prod_name):
     if(Category.objects.filter(name=cate_name,status=0)):
         if(Product.objects.filter(name=prod_name,status=0)):
@@ -62,6 +56,7 @@ def productlistAjax(request):
     
     return JsonResponse(productsList,safe=False)
 
+'''SEARCH PRODUCTS'''
 def searchproduct(request):
     if request.method == "POST":
         searchedterm = request.POST.get('productsearch')

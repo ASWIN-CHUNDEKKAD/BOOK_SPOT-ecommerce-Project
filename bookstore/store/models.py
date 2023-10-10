@@ -99,6 +99,7 @@ class Orderitem(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     price = models.FloatField(null=False)
     quantity = models.IntegerField(null=False)
+    searchablefields = ['order__fname','order__lname','product__name','product__language','product__author']
     
     
     def __str__(self):

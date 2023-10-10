@@ -198,12 +198,14 @@ class OrderAdmin(admin.ModelAdmin):
         'fname',
         'lname',
         'state',
+        'created_at'
     )
     # METHOD TO DISPLAY STATUS
     def get_status_display(self, obj):
         return dict(orderstatuses).get(obj.status, obj.status)
     get_status_display.short_description = 'Status'
     
+    # METHOD TO DISPLAY FIELDS IN PDF 
     def download_selected_pdf(self, request, queryset):
         # Defining the fields that include in the PDF
         fields_to_include = ['id', 'fname','lname','phone','address','state','payment_mode','payment_id']
@@ -214,6 +216,16 @@ class OrderAdmin(admin.ModelAdmin):
     
 '''ORDER ITEMS ADMIN'''
 class OrderitemAdmin(admin.ModelAdmin):
+    list_display = ['order','product','price']
+    list_filter = (
+        ('order__created_at', DateRangeFilter),# Adding DateRangeFilter for 'created_at' field
+        'order__fname',
+        'order__lname',
+        'order__state',
+        'order__created_at'
+    )
+    search_fields = Orderitem.searchablefields
+    
     
     def download_selected_pdf(self, request, queryset):
         # Defining the fields that include in the PDF

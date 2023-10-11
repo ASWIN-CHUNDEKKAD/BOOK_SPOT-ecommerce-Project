@@ -205,6 +205,7 @@ class OrderAdmin(admin.ModelAdmin):
         return dict(orderstatuses).get(obj.status, obj.status)
     get_status_display.short_description = 'Status'
     
+    
     # METHOD TO DISPLAY FIELDS IN PDF 
     def download_selected_pdf(self, request, queryset):
         # Defining the fields that include in the PDF
@@ -236,6 +237,7 @@ class OrderitemAdmin(admin.ModelAdmin):
 
 # USERS [ FOR THIS, FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]
 class CustomUserAdmin(UserAdmin):
+    readonly_fields = ['username']
     
     def download_selected_pdf(self, request, queryset):
         # Define the fields you want to include in the PDF

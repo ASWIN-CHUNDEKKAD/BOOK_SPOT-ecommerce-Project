@@ -174,6 +174,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     search_fields = Product.searchablefields
     list_display = ['name','language','author','category']
+    list_per_page = 10
     list_filter = ['category','language','author','trending']
     
     def download_selected_pdf(self, request, queryset):
@@ -194,6 +195,7 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['user','fname','lname','email','phone','address','city','state','country','pincode','total_price','payment_mode','payment_id','tracking_no']
     search_fields = Order.searchablefields
     list_display = ['fname','lname','email','state','country','payment_mode','get_status_display','created_at']
+    list_per_page = 10
     list_filter = (
         ('created_at', DateRangeFilter),# Adding DateRangeFilter for 'created_at' field
         'fname',
@@ -220,6 +222,7 @@ class OrderAdmin(admin.ModelAdmin):
 class OrderitemAdmin(admin.ModelAdmin):
     readonly_fields = ['order','product','price','quantity']
     list_display = ['order','product','price']
+    list_per_page = 10
     list_filter = (
         ('order__created_at', DateRangeFilter),# Adding DateRangeFilter for 'created_at' field
         'order__fname',
@@ -237,9 +240,11 @@ class OrderitemAdmin(admin.ModelAdmin):
 
     actions = [download_selected_pdf, download_excel, generate_sales_report_with_top_products]
 
-# USERS [ FOR THIS, FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]
+'''USERS [ FOR THIS, FIRST UNREGISTER THE INBUILT USER AND THEN CREATE AND REGISTER CUSTOMUSERADMIN ]'''
 class CustomUserAdmin(UserAdmin):
     readonly_fields = ['username']
+    list_per_page = 10
+    
     
     def download_selected_pdf(self, request, queryset):
         # Define the fields you want to include in the PDF

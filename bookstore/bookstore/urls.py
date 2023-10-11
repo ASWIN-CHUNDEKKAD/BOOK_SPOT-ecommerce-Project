@@ -24,7 +24,7 @@ urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),
-    path('admin_tools_stats/', include('admin_tools_stats.urls')),
+    path('admin_tools_stats/', include('admin_tools_stats.urls')), #DJANGO TOOL STATS FOR GENERATING VARIOUS GRAPH REPORTS
     path('',include('store.urls'))
 ]
 

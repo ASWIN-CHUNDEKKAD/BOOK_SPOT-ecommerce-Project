@@ -191,6 +191,7 @@ orderstatuses = (
     )
 
 class OrderAdmin(admin.ModelAdmin):
+    readonly_fields = ['user','fname','lname','email','phone','address','city','state','country','pincode','total_price','payment_mode','payment_id','tracking_no']
     search_fields = Order.searchablefields
     list_display = ['fname','lname','email','state','country','payment_mode','get_status_display','created_at']
     list_filter = (
@@ -217,6 +218,7 @@ class OrderAdmin(admin.ModelAdmin):
     
 '''ORDER ITEMS ADMIN'''
 class OrderitemAdmin(admin.ModelAdmin):
+    readonly_fields = ['order','product','price','quantity']
     list_display = ['order','product','price']
     list_filter = (
         ('order__created_at', DateRangeFilter),# Adding DateRangeFilter for 'created_at' field

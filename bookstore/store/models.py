@@ -47,8 +47,14 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
+
+'''MODEL FOR AUTHORS SLIDER/CAROUSEL TO STORE THEIR IMAGE,DESCRIPTION'''
+class Author(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=True)
+    author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
+    description = models.TextField(max_length=500,null=False,blank=False)
     
-# USERS WITHOUT COMPLETED ORDER,THAT IS USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE
+'''USERS WITHOUT COMPLETED ORDER,THAT IS USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
 class Cart(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -83,7 +89,6 @@ class Order(models.Model):
         ('Completed','Completed'),
     )
     status = models.CharField(max_length=150,choices = orderstatuses, default='pending')
-    # message=models.TextField(null=True)
     tracking_no = models.CharField(max_length=150,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

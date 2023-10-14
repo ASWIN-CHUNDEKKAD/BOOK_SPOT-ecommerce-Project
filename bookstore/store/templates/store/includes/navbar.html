@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <img src="{% static 'images/logo-6.png' %}" height=70px,width=70px class="me-4" alt="logo image">
+      <a href="{% url 'home' %}"><img src="{% static 'images/logo-6.png' %}" height=70px,width=70px class="me-4" alt="logo image"></a>
       {% comment %} <a class="navbar-brand" href="#">BOOK SPOT</a> {% endcomment %}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

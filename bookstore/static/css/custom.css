@@ -13,3 +13,6 @@
     margin-left: 10%;
 }
 
+.image:hover{
+    --zoom: 3;
+}

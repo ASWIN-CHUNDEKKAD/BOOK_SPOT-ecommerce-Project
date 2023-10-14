@@ -54,7 +54,7 @@ class Author(models.Model):
     author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
     description = models.TextField(max_length=500,null=False,blank=False)
     
-'''USERS WITHOUT COMPLETED ORDER,THAT IS USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
+'''USERS WITHOUT COMPLETED ORDER,THAT IS, USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
 class Cart(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -63,6 +63,7 @@ class Cart(models.Model):
         
     def __str__(self):
         return self.user.username
+    
 class Wishlist(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)

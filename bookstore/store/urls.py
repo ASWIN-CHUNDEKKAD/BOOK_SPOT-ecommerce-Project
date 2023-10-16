@@ -9,6 +9,8 @@ urlpatterns = [
     path('category',views.category,name='category'),
     path('category/<str:name>',views.categoryview,name='categoryview'),
     path('category/<str:cate_name>/<str:prod_name>',views.productview,name='productview'),
+    path('authors',views.authors,name='authors'),
+    path('authors/<str:auth_name>',views.authorsview,name='authorsview'),
     
     path('product-list',views.productlistAjax),
     path('searchproduct',views.searchproduct,name='searchproduct'),

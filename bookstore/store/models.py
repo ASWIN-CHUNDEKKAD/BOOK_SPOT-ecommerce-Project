@@ -52,7 +52,12 @@ class Product(models.Model):
 class Author(models.Model):
     name = models.CharField(max_length=150,null=False,blank=True)
     author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
-    description = models.TextField(max_length=500,null=False,blank=False)
+    small_description = models.TextField(max_length=500,null=False,blank=False)
+    description = models.TextField(max_length=5000,null=False,blank=False)
+    
+    
+    def __str__(self):
+        return self.name
     
 '''USERS WITHOUT COMPLETED ORDER,THAT IS, USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
 class Cart(models.Model):

@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . models import Category,Product,Banner,Category_slider
+from . models import Category,Product,Banner,Category_slider,Author
 from django.http.response import JsonResponse
 
 # Create your views here.
@@ -11,16 +11,41 @@ def home(request):
     # TODO: CACHE GENERAL DATAS AND REUSED, USE SIGNALS TO INVALIDATE CACHE DATA FOR CRUD OPERATIONS
     trending_products = Product.objects.filter(trending=1)
     cate_slider = Category_slider.objects.all()
+    authors = Author.objects.all()
+    
     context = {
         'trending_products':trending_products,
-        'cate_slider':cate_slider
+        'cate_slider':cate_slider,
+        'authors' : authors,
+        
     }
     return render(request,'store/index.html',context)
+
+def authors(request):
+    authors = Author.objects.all()
+    context = {
+        'authors' : authors
+    }
+    return render(request, 'store/authors/authors.html',context)
+
+def authorsview(request, auth_name):
+    author = Author.objects.filter(name=auth_name).first()
+    if author:
+        context = {
+            'author': author
+        }
+        return render(request, 'store/authors/authors_view.html', context)
+    else:
+        return redirect('authors')
+
+
 
 '''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
 def category(request):
     category = Category.objects.filter(status=0)
-    context = {'category':category}
+    context = {
+        'category':category
+        }
     return render(request,'store/category.html',context)
 
 '''EACH CATEGORY THERE ARE SEVERAL BOOKS,THIS FUNCTION REPRESENTS THE FILTERATION BY CATEGORY'''
@@ -28,7 +53,10 @@ def categoryview(request,name):
     if(Category.objects.filter(name=name,status=0)):                
         products = Product.objects.filter(category__name=name,status=0)
         category = Category.objects.filter(name=name).first()
-        context = {'products':products,'category':category}
+        context = {
+            'products':products,
+            'category':category
+            }
         return render(request,'store/products/index.html',context)
     else:
         messages.warning(request,"no such category found")
@@ -40,7 +68,9 @@ def productview(request,cate_name,prod_name):
     if(Category.objects.filter(name=cate_name,status=0)):
         if(Product.objects.filter(name=prod_name,status=0)):
             products = Product.objects.filter(name=prod_name,status=0).first()
-            context = {'products':products}
+            context = {
+                'products':products
+                }
         else:
             messages.error(request,"No such product found")
             return redirect('category')

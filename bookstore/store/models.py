@@ -14,7 +14,7 @@ def get_file_path(request,filename):
 
 class Banner(models.Model):
     image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
-    active = models.BooleanField(default=True, help_text='Display this banner on the website')
+    status = models.BooleanField(default=True,help_text="0=hidden,1=show")
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Category(models.Model):

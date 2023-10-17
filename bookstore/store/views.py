@@ -13,12 +13,15 @@ def home(request):
     cate_slider = Category_slider.objects.all()
     authors = Author.objects.all()
     testimonial = Testimonial.objects.filter(status=1)
+    banner = Banner.objects.filter(status=1)
     
     context = {
         'trending_products':trending_products,
         'cate_slider':cate_slider,
         'authors' : authors,
         'testimonial' : testimonial,
+        'banner' : banner,
+        
         
     }
     return render(request,'store/index.html',context)

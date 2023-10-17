@@ -3,31 +3,34 @@
 <div class="container mt-5">
     <div class="row">
       <div class="col-md-12">
-        <hr style="height:2px;border-width:2px;color:red;background-color:red">
+        {% comment %} <hr style="height:2px;border-width:2px;color:red;background-color:red"> {% endcomment %}
         
-        <h1 class="text-center fst-italic">Featured Authors</h1>
-        <hr style="height:2px;border-width:2px;color:red;background-color:red">
-        <div class="row owl-carousel owl-theme ms-1 bg-light">
-          {% for item in authors %}
-          <div class="col-md-6">
-            <br>
-            <div class="">
-              <a href="{% url 'authorsview' item.name %}">
-                <div class="card-body">
-                  <div class="category-image">
-                    <img src="{{item.author_image.url}}" alt="category-image" class="w-100  rounded-circle" height=200px,width=200px>
-                  </div>
-                  <h6 class="text-center">{{item.name}}</h6>
-                </div> 
-              </a>
+        <hr style="height:1px;border-width:1px;color:black;background-color:black">
+        <div class="bg-light">
+        <h2 class="text-center fst-italic text-danger">Featured Author</h2>
+
+          <div class="row owl-carousel owl-theme ms-1 ">
+            {% for item in authors %}
+            <div class="col-md-6 ms-5">
+              <br>
+              <div class="">
+                <a href="{% url 'authorsview' item.name %}">
+                  <div class="card-body">
+                    <div class="category-image">
+                      <img src="{{item.author_image.url}}" alt="category-image" class="w-100  rounded-circle" height=200px,width=300px>
+                    </div>
+                    <h6 class="text-center">{{item.name}}</h6>
+                  </div> 
+                </a>
+              </div>
             </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
+        
         <a href="{% url 'authors' %}"><p class="text-end">view more <i class="fa fa-arrow-right" aria-hidden="true"></i></p></a>
-        <hr style="height:2px;border-width:2px;color:red;background-color:black">
+        <hr style="height:1px;border-width:1px;color:black;background-color:black">
       </div>
     </div>
   </div> 
   {% comment %} END AUTHORS CAROUSEL {% endcomment %}
-

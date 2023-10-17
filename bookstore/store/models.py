@@ -53,11 +53,18 @@ class Author(models.Model):
     name = models.CharField(max_length=150,null=False,blank=True)
     author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
     small_description = models.TextField(max_length=500,null=False,blank=False)
-    description = models.TextField(max_length=5000,null=False,blank=False)
+    description = models.TextField(max_length=5000,null=False,blank=False)    
     
     
     def __str__(self):
         return self.name
+    
+'''TESTIMONIALS'''
+class Testimonial(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=True)
+    testimonial = models.TextField(max_length=100,null=False,blank=False)
+    status = models.BooleanField(default=True,help_text="0=hidden,1=show")
+    
     
 '''USERS WITHOUT COMPLETED ORDER,THAT IS, USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
 class Cart(models.Model):

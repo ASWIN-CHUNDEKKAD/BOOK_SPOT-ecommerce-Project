@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . models import Category,Product,Banner,Category_slider,Author
+from . models import Category,Product,Banner,Category_slider,Author,Testimonial
 from django.http.response import JsonResponse
 
 # Create your views here.
@@ -12,11 +12,13 @@ def home(request):
     trending_products = Product.objects.filter(trending=1)
     cate_slider = Category_slider.objects.all()
     authors = Author.objects.all()
+    testimonial = Testimonial.objects.filter(status=1)
     
     context = {
         'trending_products':trending_products,
         'cate_slider':cate_slider,
         'authors' : authors,
+        'testimonial' : testimonial,
         
     }
     return render(request,'store/index.html',context)

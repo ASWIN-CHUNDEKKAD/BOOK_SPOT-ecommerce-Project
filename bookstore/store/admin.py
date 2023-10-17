@@ -269,6 +269,8 @@ admin.site.register(Profile)
 admin.site.register(Banner)
 admin.site.register(Category_slider)
 admin.site.register(Author)
+admin.site.register(Testimonial)
+
 
 
 

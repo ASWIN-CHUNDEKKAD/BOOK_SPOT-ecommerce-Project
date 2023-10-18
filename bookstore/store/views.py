@@ -44,6 +44,9 @@ def authorsview(request, auth_name):
         return redirect('authors')
 
 
+def about_us(request):
+    return render(request,'store/footer/about_us.html')
+
 
 '''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
 def category(request):

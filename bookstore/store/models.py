@@ -18,6 +18,43 @@ class Banner(models.Model):
     status = models.BooleanField(default=True,help_text="0=hidden,1=show")
     created_at = models.DateTimeField(auto_now_add=True)
 
+'''MODEL FOR AUTHORS SLIDER/CAROUSEL TO STORE THEIR IMAGE,DESCRIPTION'''
+class Author(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=True)
+    author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
+    small_description = models.TextField(max_length=500,null=False,blank=False)
+    description = models.TextField(max_length=5000,null=False,blank=False)    
+    
+    
+    def __str__(self):
+        return self.name
+    
+'''TESTIMONIALS-HOME PAGE'''
+class Testimonial(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=True)
+    testimonial = models.TextField(max_length=100,null=False,blank=False)
+    status = models.BooleanField(default=True,help_text="0=hidden,1=show")
+
+    def __str__(self):
+        return self.name
+
+'''CATEGORY SLIDER IN HOME PAGE'''
+class Category_slider(models.Model):
+    name = models.CharField(max_length=150,null=False,blank=False)
+    image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+
+    def __str__(self):
+        return self.name
+
+'''SOCIAL MEDIA'''
+class Social_media(models.Model):
+    name = models.CharField(max_length=50,null=False,blank=False)
+    image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
+    link = models.URLField(max_length=200, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 '''CATEGORY'''
 class Category(models.Model):
     name = models.CharField(max_length=150,null=False,blank=False)
@@ -49,23 +86,6 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
-
-'''MODEL FOR AUTHORS SLIDER/CAROUSEL TO STORE THEIR IMAGE,DESCRIPTION'''
-class Author(models.Model):
-    name = models.CharField(max_length=150,null=False,blank=True)
-    author_image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
-    small_description = models.TextField(max_length=500,null=False,blank=False)
-    description = models.TextField(max_length=5000,null=False,blank=False)    
-    
-    
-    def __str__(self):
-        return self.name
-    
-'''TESTIMONIALS'''
-class Testimonial(models.Model):
-    name = models.CharField(max_length=150,null=False,blank=True)
-    testimonial = models.TextField(max_length=100,null=False,blank=False)
-    status = models.BooleanField(default=True,help_text="0=hidden,1=show")
     
     
 '''USERS WITHOUT COMPLETED ORDER,THAT IS, USERS CAN BE ONLY ADD TO CART,THEY CAN BE STORED IN THIS TABLE'''
@@ -141,14 +161,6 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-'''CATEGORY SLIDER IN HOME PAGE'''
-class Category_slider(models.Model):
-    name = models.CharField(max_length=150,null=False,blank=False)
-    image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
 
-    def __str__(self):
-        return self.name
     
     

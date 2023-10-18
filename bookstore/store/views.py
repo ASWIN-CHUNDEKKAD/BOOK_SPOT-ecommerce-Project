@@ -45,7 +45,7 @@ def authorsview(request, auth_name):
     else:
         return redirect('authors')
 
-
+'''ABOUT US'''
 def about_us(request):
     return render(request,'store/footer/about_us.html')
 

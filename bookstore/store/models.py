@@ -12,11 +12,13 @@ def get_file_path(request,filename):
     filename = "%s%s" % (nowTime,original_filename)
     return os.path.join('uploads/',filename)
 
+'''BANNER'''
 class Banner(models.Model):
     image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
     status = models.BooleanField(default=True,help_text="0=hidden,1=show")
     created_at = models.DateTimeField(auto_now_add=True)
 
+'''CATEGORY'''
 class Category(models.Model):
     name = models.CharField(max_length=150,null=False,blank=False)
     image = models.ImageField(upload_to=get_file_path,null=True,blank=True)
@@ -29,7 +31,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
-    
+'''PRODUCT'''
 class Product(models.Model):
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     name = models.CharField(max_length=150,null=False,blank=False)
@@ -75,12 +77,15 @@ class Cart(models.Model):
         
     def __str__(self):
         return self.user.username
-    
+
+'''WISHLIST'''
 class Wishlist(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+
+'''ORDER'''
 class Order(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     fname = models.CharField(max_length=150,null=False)
@@ -110,7 +115,7 @@ class Order(models.Model):
     def __str__(self):
         return self.user.username
     
-'''one order has multiple items ,this can be stored in this table'''
+'''ONE ORDER HAS MULTIPLE ITEMS ,THAT CAN BE STORED THIS MODEL'''
 class Orderitem(models.Model):
     order = models.ForeignKey(Order,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -121,7 +126,8 @@ class Orderitem(models.Model):
     
     def __str__(self):
         return self.order.fname
-    
+
+'''PROFILE (DURING THE ORDER PLACEMENT)'''
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     phone = models.CharField(max_length=150,null=False)
@@ -134,7 +140,8 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.user.username
-    
+
+'''CATEGORY SLIDER IN HOME PAGE'''
 class Category_slider(models.Model):
     name = models.CharField(max_length=150,null=False,blank=False)
     image = models.ImageField(upload_to=get_file_path,null=True,blank=True)

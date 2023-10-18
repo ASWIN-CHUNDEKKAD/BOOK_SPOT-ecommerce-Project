@@ -26,6 +26,7 @@ def home(request):
     }
     return render(request,'store/index.html',context)
 
+'''AUTHORS'''
 def authors(request):
     authors = Author.objects.all()
     context = {
@@ -33,6 +34,7 @@ def authors(request):
     }
     return render(request, 'store/authors/authors.html',context)
 
+'''AUTHORSVIEW PAGE'''
 def authorsview(request, auth_name):
     author = Author.objects.filter(name=auth_name).first()
     if author:

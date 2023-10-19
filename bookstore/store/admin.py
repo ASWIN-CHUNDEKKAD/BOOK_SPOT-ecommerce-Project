@@ -16,6 +16,9 @@ from django.db.models.functions import Coalesce
 # FOR EXCEL REPORT
 import xlsxwriter
 
+#  FOR IMPORT/EXPORT FUNCTIONALITY
+from import_export.admin import ImportExportModelAdmin
+
 
 '''FUNCTION OF GENERATING PDF IN ADMIN SIDE'''
 def generate_pdf(modeladmin, request, queryset, fields_to_include):
@@ -158,8 +161,11 @@ def generate_sales_report_with_top_products(modeladmin, request, queryset):
 
 generate_sales_report_with_top_products.short_description = "Download Sales Report with Top Products"
 
+
+
+
 '''CATEGORY ADMIN'''
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ImportExportModelAdmin):
     search_fields = Category.searchablefields
     
     def download_selected_pdf(self, request, queryset):
@@ -171,7 +177,7 @@ class CategoryAdmin(admin.ModelAdmin):
     
     
 '''PRODUCTS ADMIN'''
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin):
     search_fields = Product.searchablefields
     list_display = ['name','language','author','category']
     list_per_page = 10
@@ -253,7 +259,9 @@ class CustomUserAdmin(UserAdmin):
 
     actions = [download_selected_pdf, download_excel]
     
-    
+
+class AuthorAdmin(ImportExportModelAdmin):
+    pass
     
 admin.site.unregister(User)
 
@@ -268,7 +276,7 @@ admin.site.register(Orderitem,OrderitemAdmin)
 admin.site.register(Profile)
 admin.site.register(Banner)
 admin.site.register(Category_slider)
-admin.site.register(Author)
+admin.site.register(Author,AuthorAdmin)
 admin.site.register(Testimonial)
 
 

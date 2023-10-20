@@ -259,10 +259,15 @@ class CustomUserAdmin(UserAdmin):
 
     actions = [download_selected_pdf, download_excel]
     
-
+'''AUTHOR ADMIN'''
 class AuthorAdmin(ImportExportModelAdmin):
     pass
-    
+
+'''TESTIMONIAL/QUOTES'''
+class TestimonialAdmin(ImportExportModelAdmin):
+    pass
+
+
 admin.site.unregister(User)
 
 '''Register your models here.'''
@@ -277,7 +282,7 @@ admin.site.register(Profile)
 admin.site.register(Banner)
 admin.site.register(Category_slider)
 admin.site.register(Author,AuthorAdmin)
-admin.site.register(Testimonial)
+admin.site.register(Testimonial,TestimonialAdmin)
 
 
 

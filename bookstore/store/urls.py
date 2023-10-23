@@ -16,10 +16,11 @@ urlpatterns = [
     path('product-list',views.productlistAjax),
     path('searchproduct',views.searchproduct,name='searchproduct'),
     
-    # user reg.login...
+    # user reg,login...
     path('register',authview.register,name='register'),
     path('login',authview.loginpage,name='loginpage'),
     path('logout',authview.logoutpage,name='logout'),
+    path('verifyEmail',authview.VerifyOTP, name='verifyEmail'),
     path('edit_profile',authview.edit_profile,name='edit_profile'),
     
     # cart

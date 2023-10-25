@@ -28,14 +28,14 @@ def index(request):
     if request.method == 'POST':
         code = request.POST.get('code')  # Getting the entered coupon code
         if code == 'remove_coupon':
-        #     # Remove the coupon from the session
-        #     if 'discount_total' in request.session:
-        #         del request.session['discount_total']
-        #     if 'coupon_code' in request.session:
-        #         del request.session['coupon_code']
-        #     messages.success(request,"Coupon Removed Successfully")
-        #     return redirect('checkout')
-        # else:
+            # Remove the coupon from the session
+            if 'discount_total' in request.session:
+                del request.session['discount_total']
+            if 'coupon_code' in request.session:
+                del request.session['coupon_code']
+            messages.success(request,"Coupon Removed Successfully")
+            return redirect('checkout')
+        else:
             # Process the coupon code as needed
             current_time = timezone.now()
             try:

@@ -39,5 +39,3 @@ class CustomUserForm(UserCreationForm):
 #         fields = ('phone','address','city','state','country','pincode')
         
         
-class Couponcodeform(forms.Form):
-    code = forms.CharField()

@@ -9,7 +9,6 @@ from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 # from django.core.mail import EmailMessage
 # from django.template.loader import render_to_string
 
-from store.forms import Couponcodeform
 from django.utils import timezone
 
 '''CHECKOUT PAGE FUNCTION '''
@@ -26,33 +25,40 @@ def index(request):
         total_price = total_price + item.product.selling_price * item.product_qty
         
     userprofile = Profile.objects.filter(user=request.user)
-    # coupon
-    # coupon_form = Couponcodeform(request.POST)
     if request.method == 'POST':
-        code = request.POST.get('code')  # Get the entered coupon code
-        # Process the coupon code as needed
-        current_time = timezone.now()
-        try:
-            coupon_obj = Coupon.objects.get(code=code)
-            if coupon_obj.valid_to >= current_time and coupon_obj.active:
-                get_discount = (coupon_obj.discount / 100) * total_price
-                total_price_after_discount = total_price - get_discount
-                request.session['discount_total'] = total_price_after_discount
-                request.session['coupon_code'] = code
-                messages.success(request, "Coupon applied successfully")
-                return redirect('checkout')
-        except Coupon.DoesNotExist:
-            # Handle the case where the coupon code does not exist
-            messages.error(request, "Invalid coupon code")
+        code = request.POST.get('code')  # Getting the entered coupon code
+        if code == 'remove_coupon':
+        #     # Remove the coupon from the session
+        #     if 'discount_total' in request.session:
+        #         del request.session['discount_total']
+        #     if 'coupon_code' in request.session:
+        #         del request.session['coupon_code']
+        #     messages.success(request,"Coupon Removed Successfully")
+        #     return redirect('checkout')
+        # else:
+            # Process the coupon code as needed
+            current_time = timezone.now()
+            try:
+                coupon_obj = Coupon.objects.get(code=code)
+                if coupon_obj.valid_to >= current_time and coupon_obj.active:
+                    get_discount = (coupon_obj.discount / 100) * total_price
+                    total_price_after_discount = total_price - get_discount
+                    request.session['discount_total'] = total_price_after_discount
+                    request.session['coupon_code'] = code
+                    messages.success(request, "Coupon applied successfully")
+                    return redirect('checkout')
+            except Coupon.DoesNotExist:
+                # Handle the case where the coupon code does not exist
+                messages.error(request, "Invalid coupon code")
     total_price_after_discount = request.session.get('discount_total')
     coupon_code = request.session.get('coupon_code')
     context = {
             'cartitems':cartitems,
             'total_price':total_price, 
             'userprofile':userprofile,
-            # 'coupon_form':coupon_form,
             'coupon_code':coupon_code,
             'total_price_after_discount':total_price_after_discount,
+            
             }
     return render(request,'store/checkout.html',context)
 
@@ -60,7 +66,6 @@ def index(request):
 @login_required(login_url='loginpage')
 def placeorder(request):
     if request.method == "POST":
-        
         currentuser = User.objects.filter(id=request.user.id).first()
         if not currentuser.first_name:
             currentuser.first_name = request.POST.get('fname')
@@ -78,8 +83,7 @@ def placeorder(request):
             userprofile.pincode = request.POST.get('pincode')
             userprofile.save()
                 
-        
-        neworder=Order()
+        neworder = Order()
         neworder.user = request.user
         neworder.fname = request.POST.get('fname')
         neworder.lname = request.POST.get('lname')
@@ -94,16 +98,40 @@ def placeorder(request):
         neworder.payment_mode = request.POST.get('payment_mode')
         neworder.payment_id = request.POST.get('payment_id')
         
-        
-        cart=Cart.objects.filter(user=request.user)
+        cart = Cart.objects.filter(user=request.user)
         cart_total_price = 0
+        
+        # Clear coupon-related session data before calculating the total
+        if 'discount_total' in request.session:
+            del request.session['discount_total']
+        if 'coupon_code' in request.session:
+            del request.session['coupon_code']
+        
         for item in cart:
-            cart_total_price = cart_total_price + item.product.selling_price * item.product_qty
+            cart_total_price += item.product.selling_price * item.product_qty
             
-        neworder.total_price = cart_total_price      
-        trackno = 'bookspot' + str(random.randint(1111111,9999999))
-        while Order.objects.filter(tracking_no = trackno) is None:
-            trackno = 'bookspot' + str(random.randint(1111111,9999999))
+        # Check for applied coupon here
+        if request.method == 'POST':
+            code = request.POST.get('code')  # Get the entered coupon code
+            current_time = timezone.now()
+            try:
+                coupon_obj = Coupon.objects.get(code=code, active=True)
+                if coupon_obj.valid_to >= current_time:
+                    get_discount = (coupon_obj.discount / 100) * cart_total_price
+                    total_price_after_discount = cart_total_price - get_discount
+                    request.session['discount_total'] = total_price_after_discount
+                    request.session['coupon_code'] = code
+                    messages.success(request, "Coupon applied successfully")
+                    return redirect('checkout')
+            except Coupon.DoesNotExist:
+                pass
+                # messages.error(request, "Invalid coupon code")
+        
+        neworder.total_price = cart_total_price  # Store the original total
+        
+        trackno = 'bookspot' + str(random.randint(1111111, 9999999))
+        while Order.objects.filter(tracking_no=trackno).exists():
+            trackno = 'bookspot' + str(random.randint(1111111, 9999999))
             
         neworder.tracking_no = trackno
         neworder.save()
@@ -111,10 +139,10 @@ def placeorder(request):
         neworderitems = Cart.objects.filter(user=request.user)
         for item in neworderitems:
             Orderitem.objects.create(
-                order = neworder,
-                product = item.product,
-                price = item.product.selling_price,
-                quantity = item.product_qty
+                order=neworder,
+                product=item.product,
+                price=item.product.selling_price,
+                quantity=item.product_qty
             )
             
             # To decrease the product quantity from available stock
@@ -122,8 +150,14 @@ def placeorder(request):
             orderproduct.quantity = orderproduct.quantity - item.product_qty
             orderproduct.save()
             
-        # To clear user's cart
+        # To clear the user's cart
         Cart.objects.filter(user=request.user).delete()
+        
+        # Clear coupon-related session data
+        if 'discount_total' in request.session:
+            del request.session['discount_total']
+        if 'coupon_code' in request.session:
+            del request.session['coupon_code']
         
         # Send order recieved email to customer
         

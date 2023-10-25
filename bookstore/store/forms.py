@@ -38,3 +38,6 @@ class CustomUserForm(UserCreationForm):
 #         model = Profile
 #         fields = ('phone','address','city','state','country','pincode')
         
+        
+class Couponcodeform(forms.Form):
+    code = forms.CharField()

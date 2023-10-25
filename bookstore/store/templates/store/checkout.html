@@ -11,6 +11,22 @@
 </div>
 
 <div class="container mt-3">
+    
+    <div class="cart-bottom">
+        <div class="cart-discount">
+            <div class="input-group">
+                <form action="{% url 'checkout' %}" method="POST"> <!-- Use the checkout URL here -->
+                    {% csrf_token %}
+                    <input type="text" name="code" class="form-control" placeholder="Enter coupon code">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Apply Coupon</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <form action="{% url 'placeorder' %}" method="POST">
         {% csrf_token %}
         <div class="row">
@@ -89,8 +105,31 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <h6 class="fw-bold">Grand Total
-                                <span class="float-end"> Rs {{ total_price }} </span>
+
+                            {% comment %} <div class="cart-bottom">
+                                <div class="cart-discount">
+                                    <form action="" method="POST">
+                                        <div class="input-group">
+                                            {% csrf_token %}
+                                            {{ coupon_form }}
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> {% endcomment %}
+
+
+
+                            <h6 class="fw-bold mt-3">Grand Total
+                                <span class="float-end">
+                                    {% if total_price_after_discount %}
+                                        {{ total_price_after_discount }}
+                                    {% else %}  
+                                        {{ total_price }}
+                                    {% endif %} 
+                                </span>
                             </h6>
                             <input type="hidden" value="COD" name="payment_mode">
                             <div class="mt-3">

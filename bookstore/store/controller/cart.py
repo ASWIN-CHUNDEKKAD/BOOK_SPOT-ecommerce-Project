@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 
 from store.models import Product,Cart
 
-
 '''add to cart function'''
 @login_required(login_url='loginpage')
 def addtocart(request):

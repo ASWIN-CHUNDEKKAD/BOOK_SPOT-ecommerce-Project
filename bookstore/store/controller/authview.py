@@ -33,8 +33,9 @@ def VerifyOTP(request):
             # Redirect to the login page after successful registration
             return redirect('loginpage')  # Use the URL name 'loginpage' here
         else:
-            return JsonResponse({'error': 'Invalid OTP'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+            error_message = "Invalid OTP. Please try again."
+            messages.error(request, error_message)
+    return JsonResponse({'error': 'Invalid otp'}, status=400)
 
 
 '''USER REGISTRATION'''

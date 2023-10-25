@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 import os
+from django.db.models import Sum
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 # Create your models here.
 
 def get_file_path(request,filename):
@@ -126,6 +129,7 @@ class Order(models.Model):
     def __str__(self):
         return self.user.username
     
+    
 '''ONE ORDER HAS MULTIPLE ITEMS ,THAT CAN BE STORED THIS MODEL'''
 class Orderitem(models.Model):
     order = models.ForeignKey(Order,on_delete=models.CASCADE)
@@ -137,6 +141,7 @@ class Orderitem(models.Model):
     
     def __str__(self):
         return self.order.fname
+
 
 '''PROFILE (DURING THE ORDER PLACEMENT)'''
 class Profile(models.Model):
@@ -153,5 +158,13 @@ class Profile(models.Model):
         return self.user.username
 
 
-    
-    
+'''COUPON'''
+class Coupon(models.Model):
+    code = models.CharField(max_length=15, unique=True)
+    valid_from = models.DateTimeField()  # Corrected: Added parentheses
+    valid_to = models.DateTimeField()    # Corrected: Added parentheses
+    discount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(70)])
+    active = models.BooleanField(default=False)
+
+    # class Meta:
+    #     verbose_name = 'Coupon code'

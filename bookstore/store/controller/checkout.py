@@ -2,12 +2,15 @@ from django.shortcuts import render,redirect
 from django.http.response import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from store.models import Cart,Order,Orderitem,Product,Profile
+from store.models import Cart,Order,Orderitem,Product,Profile,Coupon
 from django.contrib.auth.models import User
 import random
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 # from django.core.mail import EmailMessage
 # from django.template.loader import render_to_string
+
+from store.forms import Couponcodeform
+from django.utils import timezone
 
 '''CHECKOUT PAGE FUNCTION '''
 @login_required(login_url='loginpage')
@@ -23,11 +26,33 @@ def index(request):
         total_price = total_price + item.product.selling_price * item.product_qty
         
     userprofile = Profile.objects.filter(user=request.user)
-        
+    # coupon
+    # coupon_form = Couponcodeform(request.POST)
+    if request.method == 'POST':
+        code = request.POST.get('code')  # Get the entered coupon code
+        # Process the coupon code as needed
+        current_time = timezone.now()
+        try:
+            coupon_obj = Coupon.objects.get(code=code)
+            if coupon_obj.valid_to >= current_time and coupon_obj.active:
+                get_discount = (coupon_obj.discount / 100) * total_price
+                total_price_after_discount = total_price - get_discount
+                request.session['discount_total'] = total_price_after_discount
+                request.session['coupon_code'] = code
+                messages.success(request, "Coupon applied successfully")
+                return redirect('checkout')
+        except Coupon.DoesNotExist:
+            # Handle the case where the coupon code does not exist
+            messages.error(request, "Invalid coupon code")
+    total_price_after_discount = request.session.get('discount_total')
+    coupon_code = request.session.get('coupon_code')
     context = {
             'cartitems':cartitems,
             'total_price':total_price, 
-            'userprofile':userprofile
+            'userprofile':userprofile,
+            # 'coupon_form':coupon_form,
+            'coupon_code':coupon_code,
+            'total_price_after_discount':total_price_after_discount,
             }
     return render(request,'store/checkout.html',context)
 

@@ -283,7 +283,7 @@ admin.site.register(Banner)
 admin.site.register(Category_slider)
 admin.site.register(Author,AuthorAdmin)
 admin.site.register(Testimonial,TestimonialAdmin)
-
+admin.site.register(Coupon)
 
 
 

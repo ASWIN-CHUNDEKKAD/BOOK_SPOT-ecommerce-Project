@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'rangefilter',
     'import_export',
+    
 ]
 
 MIDDLEWARE = [

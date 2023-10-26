@@ -130,28 +130,34 @@
             <hr style="height:2px;border-width:2px;color:red;background-color:red">
 
             {% comment %} COUPON BUTTON {% endcomment %}
-            <h4>Discount Coupon</h4>
-            <div class="cart-bottom mt-3">
-                <div class="cart-discount">
-                    <div class="input-group">
-                        <form action="{% url 'checkout' %}" method="POST"> <!-- Use the checkout URL here -->
-                            <div class="d-flex">
-                                {% csrf_token %}
-                                <input type="text" name="code" class="form-control" placeholder="Enter coupon code">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">Apply Coupon</button>
-                                </div>
-                                {% if coupon_code %}
-                                    <div class="input-group-append">
-                                        <button class="btn btn-danger" type="submit" name="code" value="remove_coupon">Remove Coupon</button>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </form>
+<h4>Discount Coupon :</h4>
+<div class="cart-bottom mt-3">
+    <div class="cart-discount">
+        <div class="input-group">
+            <form action="{% url 'checkout' %}" method="POST">
+                <div class="d-flex">
+                    {% csrf_token %}
+                    <input type="text" name="code" class="form-control" placeholder="Enter coupon code" style="width: 170px;"> <!-- Adjust the width as needed -->
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit" style="padding: 5px 10px;">Apply</button> <!-- Adjust padding as needed -->
                     </div>
+                    {% if coupon_code %}
+                        <div class="input-group-append">
+                            <button class="btn btn-danger" type="submit" name="code" value="remove_coupon" style="padding: 5px 10px;">Remove</button> <!-- Adjust padding as needed -->
+                        </div>
+                    {% endif %}
                 </div>
-            </div>
-            {% comment %} END COUPON BUTTON {% endcomment %}
+            </form>
+        </div>
+    </div>
+</div>
+{% comment %} END COUPON BUTTON {% endcomment %}
+{% if coupon_code %}
+<div class="applied-coupon">
+    <h5>Applied Coupon: {{ coupon_code }}</h5>
+</div>
+{% endif %}
+
         </div>
     </div>
 </div>

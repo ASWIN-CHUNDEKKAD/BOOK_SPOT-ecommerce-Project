@@ -47,6 +47,9 @@ def index(request):
                     request.session['coupon_code'] = code
                     messages.success(request, "Coupon applied successfully")
                     return redirect('checkout')
+                else:
+                    messages.error(request,"Coupon code is expired")
+                    return redirect('checkout')
             except Coupon.DoesNotExist:
                 # Handle the case where the coupon code does not exist
                 messages.error(request, "Invalid coupon code")

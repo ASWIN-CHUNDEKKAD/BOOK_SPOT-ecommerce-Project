@@ -166,5 +166,8 @@ class Coupon(models.Model):
     discount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(70)])
     active = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.code
+    
     # class Meta:
     #     verbose_name = 'Coupon code'

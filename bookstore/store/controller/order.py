@@ -20,9 +20,13 @@ from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 '''FUNCTION OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED'''
 def index(request):
     orders = Order.objects.filter(user=request.user)
+    total_price_after_discount = request.session.get('discount_total')
+    coupon_code = request.session.get('coupon_code')
     orders = list(reversed(orders))
     context = {
-        'orders':orders
+        'orders':orders,
+        'total_price_after_discount': total_price_after_discount,
+        'coupon_code':coupon_code,
         }
     return render(request,'store/orders/index.html',context)
 

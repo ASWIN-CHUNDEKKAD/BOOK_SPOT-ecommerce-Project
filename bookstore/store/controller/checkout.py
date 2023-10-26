@@ -124,8 +124,7 @@ def placeorder(request):
                     messages.success(request, "Coupon applied successfully")
                     return redirect('checkout')
             except Coupon.DoesNotExist:
-                pass
-                # messages.error(request, "Invalid coupon code")
+                pass            
         
         neworder.total_price = cart_total_price  # Store the original total
         

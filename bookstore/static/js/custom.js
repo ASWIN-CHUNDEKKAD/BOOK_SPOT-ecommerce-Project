@@ -111,7 +111,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 alertify.success(response.status)
-                $('.cartdata').load(location.href + ". cartdata");
+                $('.cartdata').load(location.href + " .cartdata");
             }
                 
         });
@@ -133,7 +133,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 alertify.success(response.status)
-                $(".wishdata").load(location.href + ". wishdata");
+                $(".wishdata").load(location.href + " .wishdata");
             }
                 
         });

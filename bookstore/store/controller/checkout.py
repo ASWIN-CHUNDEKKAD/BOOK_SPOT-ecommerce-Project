@@ -182,22 +182,10 @@ def placeorder(request):
     return redirect('/')
 
 
-# def razorpaycheck(request):
-#     cart = Cart.objects.filter(user=request.user)
-#     # TODO:REMOVE FOR LOOP AND IMPLEMENT TOTAL PRICE LOGIC USING DATABASE
-#     total_price = 0
-#     for item in cart:
-#         total_price = total_price + item.product.selling_price * item.product_qty
-        
-#     return JsonResponse({
-#         'total_price':total_price
-#     })
-
-
 '''RAZORPAY FUNCTION'''
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
-    # Calculation of the total_price using database aggregation
+    # Calculate the total price after applying any discount
     total_price = Cart.objects.filter(user=request.user).aggregate(
         total_price=Sum(
             ExpressionWrapper(
@@ -207,4 +195,8 @@ def razorpaycheck(request):
         )
     )['total_price'] or 0
 
-    return JsonResponse({'total_price': total_price})
+    # Check if a discount was applied and get the discount amount
+    discount_total = request.session.get('discount_total')
+
+    # Pass both total price and discount_total to the Razorpay page
+    return JsonResponse({'total_price': total_price, 'discount_total': discount_total})

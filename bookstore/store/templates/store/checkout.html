@@ -108,8 +108,16 @@
                                     <input type="hidden" value="COD" name="payment_mode">
                                     <div class="mt-3">
                                         <button type="submit" class="btn btn-success w-100">COD | Place order</button>
-                                        <button type="button" class="btn btn-primary payWithRozorpay w-100 mt-2">Pay with Rozorpay</button>
-        
+                                        {% comment %} <button type="button" class="btn btn-primary payWithRozorpay w-100 mt-2">Pay with Rozorpay</button> {% endcomment %}
+                                        <button type="button" class="btn btn-primary payWithRozorpay w-100 mt-2"
+                                        data-total-price="{% if coupon_code %}
+                                            {{ total_price_after_discount }}
+                                        {% else %}
+                                            {{ total_price }}
+                                        {% endif %}">
+
+                                        Pay with Razorpay</button>
+                                        
                                     </div>
                                 {% else %}
                                     Your Cart is Empty

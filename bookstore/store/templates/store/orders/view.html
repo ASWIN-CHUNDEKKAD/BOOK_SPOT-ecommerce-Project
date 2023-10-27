@@ -67,7 +67,8 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                <h4>Grand Total :<i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</h4>
+                                <h5>Total :<i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</h5>
+                                <h4>Grand total after discount :<i class="fa fa-inr" aria-hidden="true"> {{ order.total_price_after_discount }}</i></h4>
                                 <h6>Payment mode :{{ order.payment_mode }}</h6>
                                 <h6>Order status :{{ order.status }}</h6>
                                 <h6>Tracking no :{{ order.tracking_no }}</h6>

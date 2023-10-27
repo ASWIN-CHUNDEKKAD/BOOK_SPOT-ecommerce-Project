@@ -49,6 +49,11 @@
             margin-top: 10px;
             font-weight: bold;
         }
+        .grand_total{
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +100,9 @@
         </table>
         <div class="total">
             Total: {{ order.total_price }}
+        </div>
+        <div class="grand_total">
+            Grand total after discount: {{ order.total_price_after_discount }}
         </div>
     </div>
 </body>

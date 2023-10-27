@@ -83,8 +83,12 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="2" class="text-right">Grand Total : </th>
+                                                <th colspan="2" class="text-right">Total : </th>
                                                 <th class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="2" class="text-right">Grand Total after discount : </th>
+                                                <th class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price_after_discount }}</th>
                                             </tr>
                                         </tfoot>
                                     </table>

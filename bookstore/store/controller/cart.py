@@ -58,6 +58,11 @@ def deletecartitem(request):
         if(Cart.objects.filter(user = request.user,product_id=prod_id)):
             cartitem = Cart.objects.get(product_id=prod_id,user=request.user)
             cartitem.delete()
+            
+            # Check if a coupon code is applied and remove it
+            if 'coupon_code' in request.session:
+                del request.session['coupon_code']
+
         return JsonResponse({'status' : 'Updated Successfully'})
     return redirect('/')
             

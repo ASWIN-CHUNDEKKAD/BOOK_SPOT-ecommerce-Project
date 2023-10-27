@@ -71,7 +71,7 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class='dropdown-item' href="{% url 'myorders' %}">My orders</a></li>
-                <li><a class='dropdown-item' href="{% url 'edit_profile' %}">Edit Profile</a></li>
+                {% comment %} <li><a class='dropdown-item' href="{% url 'edit_profile' %}">Edit Profile</a></li> {% endcomment %}
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
               </ul>

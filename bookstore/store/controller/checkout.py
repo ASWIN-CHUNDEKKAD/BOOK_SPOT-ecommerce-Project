@@ -68,14 +68,18 @@ def index(request):
 '''PLACEORDER FUNCTION'''
 @login_required(login_url='loginpage')
 def placeorder(request):
+    total_price_after_discount = None  # Initialize with a default value
+
     if request.method == "POST":
-        currentuser = User.objects.filter(id=request.user.id).first()
+        # Check if the user's first name is not set and update it if needed
+        currentuser = request.user
         if not currentuser.first_name:
             currentuser.first_name = request.POST.get('fname')
             currentuser.last_name = request.POST.get('lname')
             currentuser.save()
-            
-        if not Profile.objects.filter(user=request.user):
+
+        # Check if the user's profile exists and create it if needed
+        if not Profile.objects.filter(user=request.user).exists():
             userprofile = Profile()
             userprofile.user = request.user
             userprofile.phone = request.POST.get('phone')
@@ -85,7 +89,32 @@ def placeorder(request):
             userprofile.country = request.POST.get('country')
             userprofile.pincode = request.POST.get('pincode')
             userprofile.save()
-                
+
+        cart = Cart.objects.filter(user=request.user)
+        cart_total_price = 0
+
+        for item in cart:
+            cart_total_price += item.product.selling_price * item.product_qty
+
+        # Retrieve the coupon code from the session
+        code = request.session.get('coupon_code', None)
+
+        if code:
+            current_time = timezone.now()
+            coupon_obj = Coupon.objects.filter(code=code, valid_to__gte=current_time, active=True).first()
+
+            if coupon_obj:
+                get_discount = (coupon_obj.discount / 100) * cart_total_price
+                total_price_after_discount = cart_total_price - get_discount
+                request.session['discount_total'] = total_price_after_discount
+                messages.success(request, "Coupon applied successfully")
+            else:
+                # Coupon code is invalid, so remove it from the session
+                del request.session['coupon_code']
+                messages.error(request, "Coupon code is expired or invalid")
+        else:
+            total_price_after_discount = cart_total_price
+
         neworder = Order()
         neworder.user = request.user
         neworder.fname = request.POST.get('fname')
@@ -97,47 +126,20 @@ def placeorder(request):
         neworder.state = request.POST.get('state')
         neworder.country = request.POST.get('country')
         neworder.pincode = request.POST.get('pincode')
-        
+
         neworder.payment_mode = request.POST.get('payment_mode')
         neworder.payment_id = request.POST.get('payment_id')
-        
-        cart = Cart.objects.filter(user=request.user)
-        cart_total_price = 0
-        
-        # Clear coupon-related session data before calculating the total
-        if 'discount_total' in request.session:
-            del request.session['discount_total']
-        if 'coupon_code' in request.session:
-            del request.session['coupon_code']
-        
-        for item in cart:
-            cart_total_price += item.product.selling_price * item.product_qty
-            
-        # Check for applied coupon here
-        if request.method == 'POST':
-            code = request.POST.get('code')  # Get the entered coupon code
-            current_time = timezone.now()
-            try:
-                coupon_obj = Coupon.objects.get(code=code, active=True)
-                if coupon_obj.valid_to >= current_time:
-                    get_discount = (coupon_obj.discount / 100) * cart_total_price
-                    total_price_after_discount = cart_total_price - get_discount
-                    request.session['discount_total'] = total_price_after_discount
-                    request.session['coupon_code'] = code
-                    messages.success(request, "Coupon applied successfully")
-                    return redirect('checkout')
-            except Coupon.DoesNotExist:
-                pass            
-        
-        neworder.total_price = cart_total_price  # Store the original total
-        
+
+        neworder.total_price = cart_total_price
+        neworder.total_price_after_discount = total_price_after_discount
+
         trackno = 'bookspot' + str(random.randint(1111111, 9999999))
         while Order.objects.filter(tracking_no=trackno).exists():
             trackno = 'bookspot' + str(random.randint(1111111, 9999999))
-            
+
         neworder.tracking_no = trackno
         neworder.save()
-        
+
         neworderitems = Cart.objects.filter(user=request.user)
         for item in neworderitems:
             Orderitem.objects.create(
@@ -146,41 +148,30 @@ def placeorder(request):
                 price=item.product.selling_price,
                 quantity=item.product_qty
             )
-            
+
             # To decrease the product quantity from available stock
             orderproduct = Product.objects.filter(id=item.product_id).first()
             orderproduct.quantity = orderproduct.quantity - item.product_qty
             orderproduct.save()
-            
+
         # To clear the user's cart
         Cart.objects.filter(user=request.user).delete()
-        
+
         # Clear coupon-related session data
         if 'discount_total' in request.session:
             del request.session['discount_total']
         if 'coupon_code' in request.session:
             del request.session['coupon_code']
-        
-        # Send order recieved email to customer
-        
-        # orders = Order.objects.filter(user=request.user)
-        # mail_subject = "THANK YOU FOR YOUR ORDER"
-        # message = render_to_string('store/orders/order_recieved_email.html',{
-        #     'user':request.user,
-        #     'orders':orders,
-        # })
-        # to_email = request.user.email
-        # send_email = EmailMessage(mail_subject,message, to_email)
-        # send_email.send()
-        
-            
+
+        # Send order received email to customer
+        # ... (your email sending code)
+
         payMode = request.POST.get('payment_mode')
-        if (payMode=="Paid by Razorpay"):
-            return JsonResponse({'status':"Your order has been placed successfully"})
+        if (payMode == "Paid by Razorpay"):
+            return JsonResponse({'status': "Your order has been placed successfully"})
         else:
             messages.success(request, "Your order has been placed successfully")
-            
-        
+
     return redirect('/')
 
 

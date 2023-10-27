@@ -112,6 +112,7 @@ class Order(models.Model):
     country = models.CharField(max_length=150,null=False)
     pincode = models.CharField(max_length=150,null=False)
     total_price = models.FloatField(null=False)
+    total_price_after_discount = models.FloatField(null=True)
     payment_mode = models.CharField(max_length=150,null=False)
     payment_id = models.CharField(max_length=250,null=True)
     orderstatuses = (

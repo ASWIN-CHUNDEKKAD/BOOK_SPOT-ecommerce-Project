@@ -41,14 +41,22 @@ def index(request):
             try:
                 coupon_obj = Coupon.objects.get(code=code)
                 if coupon_obj.valid_to >= current_time and coupon_obj.active:
-                    get_discount = (coupon_obj.discount / 100) * total_price
-                    total_price_after_discount = total_price - get_discount
-                    request.session['discount_total'] = total_price_after_discount
-                    request.session['coupon_code'] = code
-                    messages.success(request, "Coupon applied successfully")
-                    return redirect('checkout')
+                    if coupon_obj.usage_count < coupon_obj.max_usage:
+                # Increment the usage count for the coupon
+                        coupon_obj.usage_count += 1
+                        coupon_obj.save()
+
+                        get_discount = (coupon_obj.discount / 100) * total_price
+                        total_price_after_discount = total_price - get_discount
+                        request.session['discount_total'] = total_price_after_discount
+                        request.session['coupon_code'] = code
+                        messages.success(request, "Coupon applied successfully")
+                        return redirect('checkout')
+                    else:
+                        messages.error(request, "Coupon usage limit reached")
+                        return redirect('checkout')
                 else:
-                    messages.error(request,"Coupon code is expired")
+                    messages.error(request, "Coupon code is expired")
                     return redirect('checkout')
             except Coupon.DoesNotExist:
                 # Handle the case where the coupon code does not exist

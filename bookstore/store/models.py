@@ -166,6 +166,8 @@ class Coupon(models.Model):
     valid_to = models.DateTimeField()    # Corrected: Added parentheses
     discount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(70)])
     active = models.BooleanField(default=False)
+    usage_count = models.PositiveBigIntegerField(default=0)
+    max_usage = models.PositiveBigIntegerField(default=1)
 
     def __str__(self):
         return self.code

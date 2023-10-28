@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Sum, F, ExpressionWrapper, FloatField
 from rangefilter.filter import DateRangeFilter
+from django.utils.safestring import mark_safe
 
 # REPORT LAB LIBRARIES FOR GENERATING PDF
 from reportlab.lib.pagesizes import letter, landscape
@@ -179,9 +180,17 @@ class CategoryAdmin(ImportExportModelAdmin):
 '''PRODUCTS ADMIN'''
 class ProductAdmin(ImportExportModelAdmin):
     search_fields = Product.searchablefields
-    list_display = ['name','language','author','category']
+    list_display = ['name','language','author','category','view_image']
     list_per_page = 10
     list_filter = ['category','language','author','trending']
+    
+    def view_image(self, obj):
+        if obj.product_image:
+            return mark_safe('<a href="{}" target="_blank"><img src="{}" width="50" height="50" /></a>'.format(obj.product_image.url, obj.product_image.url))
+        else:
+            return "No Image"
+
+    view_image.short_description = 'View Image'
     
     def download_selected_pdf(self, request, queryset):
         # FIELDS THAT INCLUDES IN PDF

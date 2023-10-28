@@ -37,7 +37,7 @@ def index(request):
 '''DETAILES OF EACH ORDER'''
 def vieworder(request,t_no):
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
-    orderitems = Orderitem.objects.filter(order=order)
+    orderitems = Orderitem.objects.filter(order=order).select_related('product')
     context = {
         'order':order,
         'orderitems':orderitems
@@ -47,7 +47,7 @@ def vieworder(request,t_no):
 '''INVOICE'''
 def invoice(request,t_no):
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
-    orderitems = Orderitem.objects.filter(order=order)
+    orderitems = Orderitem.objects.filter(order=order).select_related('product')
     context = {
         'order':order,
         'orderitems':orderitems

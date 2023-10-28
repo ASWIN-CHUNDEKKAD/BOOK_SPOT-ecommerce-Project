@@ -8,7 +8,7 @@ from store.models import Wishlist,Product
 '''WISHLIST PAGE FUNCTIONALITY'''
 @login_required(login_url='loginpage')
 def index(request):
-    wishlist = Wishlist.objects.filter(user=request.user)
+    wishlist = Wishlist.objects.filter(user=request.user).select_related('product')
     context = {'wishlist':wishlist}
     return render(request,'store/wishlist.html',context)
 
@@ -18,7 +18,7 @@ def addtowishlist(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
-            product_check = Product.objects.get(id=prod_id) 
+            product_check = Product.objects.get(id=prod_id)
             if(product_check):
                 if(Wishlist.objects.filter(user=request.user,product_id=prod_id)):
                     return JsonResponse({'status':'product allready in wishlist'})

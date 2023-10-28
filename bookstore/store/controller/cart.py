@@ -11,9 +11,9 @@ def addtocart(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
-            product_check = Product.objects.get(id=prod_id)
+            product_check = Product.objects.select_related('category').get(id=prod_id)
             if(product_check):
-                if(Cart.objects.filter(user=request.user.id,product_id = prod_id)):
+                if(Cart.objects.select_related('product').filter(user=request.user.id,product_id = prod_id)):
                     return JsonResponse({'status' : 'Product Already in Cart'})
                 else:
                     prod_qty = int(request.POST.get('product_qty'))
@@ -35,7 +35,7 @@ def addtocart(request):
 def viewcart(request):
 # TODO: REF PREFETCH RELATED AND SELECT RELATED FOR ORM OPTIMIZATION
 # INSTALL DJANGO DEBUGG TOOLBAR PACKAGE 
-    cart = Cart.objects.filter(user=request.user)
+    cart = Cart.objects.filter(user=request.user).select_related('product')
     context = {'cart' : cart}
     return render(request,'store/cart.html',context)
       

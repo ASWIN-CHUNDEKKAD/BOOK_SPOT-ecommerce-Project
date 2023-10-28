@@ -14,12 +14,12 @@ from django.utils import timezone
 '''CHECKOUT PAGE FUNCTION '''
 @login_required(login_url='loginpage')
 def index(request):
-    rowcart = Cart.objects.filter(user=request.user)
-    for item in rowcart:
+    cartitems = Cart.objects.select_related('product').filter(user=request.user)
+    for item in cartitems:
         if item.product_qty > item.product.quantity:
             Cart.objects.delete(id=item.id)
             
-    cartitems = Cart.objects.filter(user=request.user)
+    # cartitems = Cart.objects.select_related('product').filter(user=request.user)
     total_price = 0
     for item in cartitems:
         total_price = total_price + item.product.selling_price * item.product_qty
@@ -98,7 +98,7 @@ def placeorder(request):
             userprofile.pincode = request.POST.get('pincode')
             userprofile.save()
 
-        cart = Cart.objects.filter(user=request.user)
+        cart = Cart.objects.select_related('product').filter(user=request.user)
         cart_total_price = 0
 
         for item in cart:

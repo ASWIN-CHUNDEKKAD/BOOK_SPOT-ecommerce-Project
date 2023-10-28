@@ -9,7 +9,7 @@ from django.http.response import JsonResponse
 def home(request):
     
     # TODO: CACHE GENERAL DATAS AND REUSED, USE SIGNALS TO INVALIDATE CACHE DATA FOR CRUD OPERATIONS
-    trending_products = Product.objects.filter(trending=1)
+    trending_products = Product.objects.filter(trending=1).select_related('category')
     cate_slider = Category_slider.objects.all()
     authors = Author.objects.all()
     testimonial = Testimonial.objects.filter(status=1)
@@ -61,7 +61,7 @@ def category(request):
 '''EACH CATEGORY THERE ARE SEVERAL BOOKS,THIS FUNCTION REPRESENTS THE FILTERATION BY CATEGORY'''
 def categoryview(request,name):
     if(Category.objects.filter(name=name,status=0)):                
-        products = Product.objects.filter(category__name=name,status=0)
+        products = Product.objects.filter(category__name=name,status=0).select_related('category')
         category = Category.objects.filter(name=name).first()
         context = {
             'products':products,
@@ -77,7 +77,7 @@ def categoryview(request,name):
 def productview(request,cate_name,prod_name):
     if(Category.objects.filter(name=cate_name,status=0)):
         if(Product.objects.filter(name=prod_name,status=0)):
-            products = Product.objects.filter(name=prod_name,status=0).first()
+            products = Product.objects.select_related('category').filter(name=prod_name,status=0).first()
             context = {
                 'products':products
                 }

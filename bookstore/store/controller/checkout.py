@@ -79,7 +79,6 @@ def placeorder(request):
     total_price_after_discount = None  # Initialize with a default value
 
     if request.method == "POST":
-        # Check if the user's first name is not set and update it if needed
         currentuser = request.user
         if not currentuser.first_name:
             currentuser.first_name = request.POST.get('fname')

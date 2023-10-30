@@ -11,6 +11,8 @@ from xhtml2pdf.default import DEFAULT_FONT
 from reportlab.lib.pagesizes import letter  # Import the desired page size
 from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 
+from django.core.cache import cache
+
 
 # from django.template.loader import render_to_string
 # from weasyprint import HTML
@@ -19,20 +21,38 @@ from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 
 '''FUNCTION OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED'''
 def index(request):
-    orders = Order.objects.filter(user=request.user)
-    orders = list(reversed(orders))
-    
-    for order in orders:
-        # Check if 'total_price_after_discount' is available and not None
-        if order.total_price_after_discount is not None:
-            order.display_total_price = order.total_price_after_discount
-        else:
-            order.display_total_price = order.total_price
-    
-    context = {
-        'orders':orders,
+    # Construct a cache key based on the user's ID
+    cache_key = f'orders_{request.user.id}'
+
+    # Try to retrieve the orders from the cache
+    orders = cache.get(cache_key)
+
+    if orders is None:
+        # If the orders are not in the cache, execute the view logic
+        orders = Order.objects.filter(user=request.user)
+        orders = list(reversed(orders))
+        
+        for order in orders:
+            # Check if 'total_price_after_discount' is available and not None
+            if order.total_price_after_discount is not None:
+                order.display_total_price = order.total_price_after_discount
+            else:
+                order.display_total_price = order.total_price
+        
+        context = {
+            'orders': orders,
         }
-    return render(request,'store/orders/index.html',context)
+
+        # Cache the orders for future requests
+        cache.set(cache_key, orders, timeout=3600)  # Cache for 1 hour 
+
+        return render(request, 'store/orders/index.html', context)
+    else:
+        # If the orders are in the cache,
+        context = {
+            'orders': orders,
+        }
+        return render(request, 'store/orders/index.html', context)
 
 '''DETAILES OF EACH ORDER'''
 def vieworder(request,t_no):

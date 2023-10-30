@@ -4,13 +4,30 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from store.models import Wishlist,Product
+from django.core.cache import cache
 
 '''WISHLIST PAGE FUNCTIONALITY'''
 @login_required(login_url='loginpage')
 def index(request):
-    wishlist = Wishlist.objects.filter(user=request.user).select_related('product')
-    context = {'wishlist':wishlist}
-    return render(request,'store/wishlist.html',context)
+    # Construct a cache key based on the user's ID
+    cache_key = f'wishlist_{request.user.id}'
+
+    # Try to retrieve the wishlist from the cache
+    wishlist = cache.get(cache_key)
+
+    if wishlist is None:
+        # If the wishlist is not in the cache, execute the view logic
+        wishlist = Wishlist.objects.filter(user=request.user).select_related('product')
+        context = {'wishlist': wishlist}
+
+        # Cache the wishlist for future requests
+        cache.set(cache_key, wishlist, timeout=3600)  # Cache for 1 hour (adjust as needed)
+
+        return render(request, 'store/wishlist.html', context)
+    else:
+        # If the wishlist is in the cache, use it
+        context = {'wishlist': wishlist}
+        return render(request, 'store/wishlist.html', context)
 
 
 '''ADD TO WISHLIST'''

@@ -24,7 +24,11 @@ def index(request):
     for item in cartitems:
         total_price = total_price + item.product.selling_price * item.product_qty
         
-    userprofile = Profile.objects.filter(user=request.user)
+    userprofile = None
+    try:
+        userprofile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        pass
     if request.method == 'POST':
         code = request.POST.get('code')  # Getting the entered coupon code
         if code == 'remove_coupon':

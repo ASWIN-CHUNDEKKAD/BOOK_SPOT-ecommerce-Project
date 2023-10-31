@@ -6,32 +6,16 @@ from django.contrib.auth.decorators import login_required
 from store.models import Wishlist,Product
 from django.core.cache import cache
 
-'''WISHLIST PAGE FUNCTIONALITY'''
 @login_required(login_url='loginpage')
 def index(request):
-    # Construct a cache key based on the user's ID
-    cache_key = f'wishlist_{request.user.id}'
-
-    # Try to retrieve the wishlist from the cache
-    wishlist = cache.get(cache_key)
-
-    if wishlist is None:
-        # If the wishlist is not in the cache, execute the view logic
-        wishlist = Wishlist.objects.filter(user=request.user).select_related('product')
-        context = {'wishlist': wishlist}
-
-        # Cache the wishlist for future requests
-        cache.set(cache_key, wishlist, timeout=3600)  # Cache for 1 hour (adjust as needed)
-
-        return render(request, 'store/wishlist.html', context)
-    else:
-        # If the wishlist is in the cache, use it
-        context = {'wishlist': wishlist}
-        return render(request, 'store/wishlist.html', context)
+    wishlist = Wishlist.objects.filter(user=request.user).select_related('product')
+    context = {'wishlist':wishlist}
+    return render(request,'store/wishlist.html',context)
 
 
-'''ADD TO WISHLIST'''
 def addtowishlist(request):
+    '''ADD TO WISHLIST'''
+
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
@@ -55,13 +39,16 @@ def deletewishlistitem(request):
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
             
-            if(Wishlist.objects.filter(user=request.user, product_id=prod_id)):
-                wishlistitem = Wishlist.objects.get(product_id=prod_id)
-                wishlistitem.delete()
-                return JsonResponse({'status':'product removed from wishlist'})
+            # Use filter to get a queryset of matching Wishlist items
+            wishlist_items = Wishlist.objects.filter(user=request.user, product_id=prod_id)
+            
+            if wishlist_items.exists():
+                # Delete all matching items in the queryset
+                wishlist_items.delete()
+                return JsonResponse({'status': 'Product removed from wishlist'})
             else:                
-                return JsonResponse({'status':'product not found in wishlist'})
+                return JsonResponse({'status': 'Product not found in wishlist'})
         else:
-            return JsonResponse({'status':'Login to continue'})
+            return JsonResponse({'status': 'Login to continue'})
     
     return redirect('/')

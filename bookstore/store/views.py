@@ -31,7 +31,7 @@ def home(request):
         }
 
         # Cache the data for future requests
-        cache.set(cache_key, context, timeout=3600)  # Cache for 1 hour 
+        cache.set(cache_key, context, timeout=10)  # Cache for 3600 sec
 
         return render(request, 'store/index.html', context)
     else:
@@ -48,7 +48,7 @@ def authors(request):
         authors = Author.objects.all()
         
         # Cache the data for future requests
-        cache.set('authors', authors, timeout=3600)  # Cache for 1 hour
+        cache.set('authors', authors, timeout=10)  # Cache for 10 sec
     context = {
         'authors': authors
     }
@@ -66,7 +66,7 @@ def authorsview(request, auth_name):
         
         if author:
             # Cache the author data for future requests
-            cache.set(f'author_{auth_name}', author, timeout=3600)  # Cache for 1 hour 
+            cache.set(f'author_{auth_name}', author, timeout=10)  # Cache for 10 sec
 
     if author:
         context = {
@@ -86,87 +86,42 @@ def about_us(request):
         cached_response = render(request, 'store/footer/about_us.html')
 
         # Cache the entire view response for future requests
-        cache.set('about_us_view', cached_response, timeout=3600)  # Cache for 1 hour 
+        cache.set('about_us_view', cached_response, timeout=10)  # Cache for 10 sec 
 
     return cached_response
 
 
 '''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
 def category(request):
-    # Check if the category data is already cached
-    categories = cache.get('categories')
-    
-    if categories is None:
-        # If data is not cached, retrieve it from the database
-        categories = Category.objects.filter(status=0)
-        
-        # Cache the data for future requests
-        cache.set('categories', categories, timeout=3600)  # Cache for 1 hour 
-        
-    context = {
-        'category': categories
-    }
+    category = Category.objects.filter(status=0)
+    context = {'category':category}
+    return render(request,'store/category.html',context)
 
-    return render(request, 'store/category.html', context)
+'''Each category there are several books,This function represents the filteration of products by category'''
+def categoryview(request,name):
+    if(Category.objects.filter(name=name,status=0)):                
+        products = Product.objects.filter(category__name=name,status=0)
+        category = Category.objects.filter(name=name).first()
+        context = {'products':products,'category':category}
+        return render(request,'store/products/index.html',context)
+    else:
+        messages.warning(request,"no such category found")
+        return redirect('category')
 
-'''EACH CATEGORY THERE ARE SEVERAL BOOKS,THIS FUNCTION REPRESENTS THE FILTERATION BY CATEGORY'''
-def categoryview(request, name):
-    # Construct a cache key based on the category name
-    cache_key = f'category_{name}'
 
-    # Try to retrieve the view response from the cache
-    response = cache.get(cache_key)
-
-    if response is None:
-        # If the response is not cached, execute the view logic
-        if Category.objects.filter(name=name, status=0).exists():
-            products = Product.objects.filter(category__name=name, status=0).select_related('category')
-            category = Category.objects.get(name=name)
-
-            context = {
-                'products': products,
-                'category': category,
-            }
-
-            response = render(request, 'store/products/index.html', context)
-
-            # Cache the view response for future requests
-            cache.set(cache_key, response, timeout=3600)  # Cache for 1 hour 
+'''Detail view of each product'''
+def productview(request,cate_name,prod_name):
+    if(Category.objects.filter(name=cate_name,status=0)):
+        if(Product.objects.filter(name=prod_name,status=0)):
+            products = Product.objects.filter(name=prod_name,status=0).first()
+            context = {'products':products}
         else:
-            messages.warning(request, "No such category found")
+            messages.error(request,"No such product found")
             return redirect('category')
-
-    return response
-    
-    
-'''DETAIL VIEW OF EACH PRODUCT'''
-def productview(request, cate_name, prod_name):
-    # Construct a cache key based on the category and product names
-    cache_key = f'product_{cate_name}_{prod_name}'
-
-    # Try to retrieve the view response from the cache
-    response = cache.get(cache_key)
-
-    if response is None:
-        # If the response is not cached, execute the view logic
-        if Category.objects.filter(name=cate_name, status=0).exists():
-            if Product.objects.filter(name=prod_name, status=0).exists():
-                products = Product.objects.select_related('category').filter(name=prod_name, status=0).first()
-                context = {
-                    'products': products,
-                }
-                response = render(request, 'store/products/view.html', context)
-
-                # Cache the view response for future requests
-                cache.set(cache_key, response, timeout=3600)  # Cache for 1 hour
-            else:
-                messages.error(request, "No such product found")
-                return redirect('category')
-        else:
-            messages.error(request, "No such category found")
-            return redirect('category')
-
-    return response
+    else:
+        messages.error(request,"No such category found")
+        return redirect('category')
+    return render(request,'store/products/view.html',context)
 
 def productlistAjax(request):
     products = Product.objects.filter(status=0).values_list('name',flat=True)
@@ -197,7 +152,7 @@ def searchproduct(request):
 
             if product:
                 # Cache the search result for future requests
-                cache.set(cache_key, product, timeout=3600)  # Cache for 1 hour
+                cache.set(cache_key, product, timeout=10)  # Cache for 10 sec
                 print(f"Search result for '{searchedterm}' not found in cache, generated and cached.")
                 return redirect('category' + '/' + product.category.name + '/' + product.name)
             else:

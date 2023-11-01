@@ -21,7 +21,7 @@ urlpatterns = [
     path('login',authview.loginpage,name='loginpage'),
     path('logout',authview.logoutpage,name='logout'),
     path('verifyEmail',authview.VerifyOTP, name='verifyEmail'),
-    path('edit_profile',authview.edit_profile,name='edit_profile'),
+    # path('edit_profile',authview.edit_profile,name='edit_profile'),
     
     # cart
     path('add-to-cart',cart.addtocart,name='addtocart'),

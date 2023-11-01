@@ -6,14 +6,14 @@ from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-# Create your views here.
 
+# ...START- FUNCTION OF HOME PAGE...
 def home(request):
     '''FUNCTION OF HOMEPAGE OF THE WEBSITE'''
     
     # Construct a cache key for the home page
     cache_key = 'home_page_data'
-
+    
     # Try to retrieve the cached data
     cached_data = cache.get(cache_key)
 
@@ -34,14 +34,18 @@ def home(request):
         }
 
         # Cache the data for future requests
-        cache.set(cache_key, context, timeout=10)  # Cache for 3600 sec
+        cache.set(cache_key, context, timeout=10)  # Cache for 1 hr
 
         return render(request, 'store/index.html', context)
     else:
         # If the data is in the cache,
         return render(request, 'store/index.html', cached_data)
+# ...END- FUNCTION OF HOME PAGE...
 
-'''AUTHORS'''
+
+
+
+# ...START- FUNCTION OF AUTHORS...
 def get_authors_cache_key():
     return 'authors'
 
@@ -52,6 +56,7 @@ def invalidate_authors_cache(sender, instance, **kwargs):
     cache.delete(cache_key)
 
 def authors(request):
+    '''AUTHORS'''
     # Check if data is already cached
     authors = cache.get('authors')
     
@@ -60,14 +65,18 @@ def authors(request):
         authors = Author.objects.all()
         
         # Cache the data for future requests
-        cache.set('authors', authors, timeout=3600)  # Cache for 3600 sec
+        cache.set('authors', authors, timeout=3600)  # Cache for 1hr
     context = {
         'authors': authors
     }
     
     return render(request, 'store/authors/authors.html', context)
+# ...END- FUNCTION OF AUTHORS...
 
-'''AUTHORSVIEW PAGE'''
+
+
+
+# ...START- FUNCTION OF AUTHORS VIEW PAGE...
 def get_author_cache_key(auth_name):
     return f'author_{auth_name}'
 
@@ -78,8 +87,8 @@ def invalidate_author_cache(sender, instance, **kwargs):
         author_cache_key = get_author_cache_key(instance.name)
         cache.delete(author_cache_key)
 
-
 def authorsview(request, auth_name):
+    '''AUTHORS VIEW PAGE'''
     # Check if the author data is already cached
     author_cache_key = get_author_cache_key(auth_name)
     author = cache.get(author_cache_key)
@@ -90,7 +99,7 @@ def authorsview(request, auth_name):
 
         if author:
             # Cache the author data for future requests
-            cache.set(author_cache_key, author, timeout=10)  # Cache for 10 sec
+            cache.set(author_cache_key, author, timeout=3600)  # Cache for 1 hr
 
     if author:
         context = {
@@ -99,10 +108,15 @@ def authorsview(request, auth_name):
         return render(request, 'store/authors/authors_view.html', context)
     else:
         return redirect('authors')
+# ...END- FUNCTION OF AUTHORS VIEW PAGE...
+
 
     
-'''ABOUT US'''
+    
+    
+# ...START- FUNCTION OF ABOUT US...
 def about_us(request):
+    '''ABOUT US'''
     # Check if the view is already cached
     cached_response = cache.get('about_us_view')
     
@@ -111,12 +125,15 @@ def about_us(request):
         cached_response = render(request, 'store/footer/about_us.html')
 
         # Cache the entire view response for future requests
-        cache.set('about_us_view', cached_response, timeout=10)  # Cache for 10 sec 
+        cache.set('about_us_view', cached_response, timeout=3600)  # Cache for 1 hr
 
     return cached_response
+# ...END- FUNCTION OF ABOUT US...
 
 
-'''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
+
+
+# ...START-FUNCTION OF CATEGORY OF BOOKS...
 def get_category_list_cache_key():
     return 'category_list_cache'
 
@@ -127,6 +144,7 @@ def invalidate_category_list_cache(sender, instance, **kwargs):
     cache.delete(cache_key)
 
 def category(request):
+    '''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
     # Check if the category list is in the cache
     cache_key = get_category_list_cache_key()
     cached_data = cache.get(cache_key)
@@ -135,11 +153,15 @@ def category(request):
 
     categories = Category.objects.filter(status=0)
     context = {'category': categories}
-    # Store the data in the cache with a timeout (e.g., 3600 seconds)
+    # Store the data in the cache with a timeout 
     cache.set(cache_key, render(request, 'store/category.html', context), 3600)
     return render(request, 'store/category.html', context)
+# ...END-FUNCTION OF CATEGORY OF BOOKS...
 
-'''Each category there are several books,This function represents the filteration of products by category'''
+
+
+
+# ...START- FUNCTION OF PRODUCTS LISTING OF EACH CATEGORY...
 def get_product_list_cache_key(category_name):
     return f'product_list_{category_name}_cache'
 
@@ -152,6 +174,7 @@ def invalidate_product_list_cache(sender, instance, **kwargs):
         cache.delete(cache_key)
 
 def categoryview(request, name):
+    '''EACH CATEGORIES, THERE ARE SEVERAL BOOKS,THIS FUNCTION ALSO REPRESENTS THE FILTERATION BY CATEGORIES'''
     # Check if the product list is in the cache
     product_cache_key = get_product_list_cache_key(name)
     product_cached_data = cache.get(product_cache_key)
@@ -167,16 +190,18 @@ def categoryview(request, name):
             'category': category
         }
 
-        # Store the data in the cache with a timeout (e.g., 3600 seconds)
+        # Store the data in the cache with a timeout 
         cache.set(product_cache_key, render(request, 'store/products/index.html', context), 3600)
         return render(request, 'store/products/index.html', context)
     else:
         messages.warning(request, "No such category found")
         return redirect('category')
+# ...END- FUNCTION OF PRODUCTS LISTING OF EACH CATEGORY...
 
     
     
-'''Detail view of each product'''
+    
+# ...START- FUNCTION OF DETAIL VIEW OF EACH PRODUCT...
 @receiver([post_save, post_delete], sender=Category)
 @receiver([post_save, post_delete], sender=Product)
 def invalidate_cache(sender, instance, **kwargs):
@@ -196,6 +221,7 @@ post_save.connect(invalidate_cache, sender=Product)
 post_delete.connect(invalidate_cache, sender=Product)
 
 def productview(request, cate_name, prod_name):
+    '''DETAIL VIEW OF EACH PRODUCT'''
     # Check if the result is already in the cache
     cache_key = f"productview_{cate_name}_{prod_name}"
     cached_result = cache.get(cache_key)
@@ -215,19 +241,23 @@ def productview(request, cate_name, prod_name):
             return redirect('category')
 
         # Cache the result for future requests
-        cache.set(cache_key, context, timeout=3600)  # Cache the result for 1 hour (you can adjust this value)
+        cache.set(cache_key, context, timeout=3600)  # Cache the result for 1 hour 
 
     return render(request, 'store/products/view.html', context)
+# ...END- FUNCTION OF DETAIL VIEW OF EACH PRODUCT...
 
+
+
+
+# ...START SEARCH PRODUCTS FUNCTION...
 def productlistAjax(request):
+    '''FUNCTION OF GETTING ALL AVAILABLE PRODUCTS IN DATABASE'''
     products = Product.objects.filter(status=0).values_list('name',flat=True)
     productsList = list(products)
-    
-    
     return JsonResponse(productsList,safe=False)
 
-'''SEARCH PRODUCTS'''
 def searchproduct(request):
+    '''SEARCH PRODUCTS'''
     if request.method == "POST":
         searchedterm = request.POST.get('productsearch')
         if searchedterm == "":
@@ -248,7 +278,7 @@ def searchproduct(request):
 
             if product:
                 # Cache the search result for future requests
-                cache.set(cache_key, product, timeout=10)  # Cache for 10 sec
+                cache.set(cache_key, product, timeout=3600)  # Cache for 1 HR
                 print(f"Search result for '{searchedterm}' not found in cache, generated and cached.")
                 return redirect('category' + '/' + product.category.name + '/' + product.name)
             else:
@@ -256,3 +286,4 @@ def searchproduct(request):
                 return redirect(request.META.get('HTTP_REFERER'))
 
     return redirect(request.META.get('HTTP_REFERER'))
+# ...END SEARCH PRODUCTS FUNCTION...

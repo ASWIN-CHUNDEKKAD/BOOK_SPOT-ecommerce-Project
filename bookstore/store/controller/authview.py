@@ -9,8 +9,11 @@ import random
 from django.views.decorators.csrf import csrf_exempt
 from store.models import User
 
+
+# ...START- FUNCTION OF VERIFICATION OF EMAIL THROUGH OTP...
 @csrf_exempt
 def VerifyOTP(request):
+    user = None
     if request.method == "POST":
         userotp = request.POST.get('otp')
         stored_otp = request.session.get('otp')
@@ -35,6 +38,9 @@ def VerifyOTP(request):
         else:
             error_message = "Invalid OTP. Please try again."
             messages.error(request, error_message)
+            
+    if user is not None:
+        pass
     return JsonResponse({'error': 'Invalid otp'}, status=400)
 
 
@@ -88,6 +94,6 @@ def logoutpage(request):
         messages.success(request,"Logout Successfully")
     return redirect('home')
 
-'''EDIT PROFILE FUNCTIONALITY'''
-def edit_profile(request):
-    return render(request,'store/auth/edit_profile.html')
+# '''EDIT PROFILE FUNCTIONALITY'''
+# def edit_profile(request):
+#     return render(request,'store/auth/edit_profile.html')

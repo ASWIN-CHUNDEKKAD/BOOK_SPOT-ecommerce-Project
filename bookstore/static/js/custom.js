@@ -110,8 +110,9 @@ $(document).ready(function () {
                 csrfmiddlewaretoken: token
             },
             success: function (response) {
-                alertify.success(response.status)
+                alertify.success(response.status);
                 $('.cartdata').load(location.href + " .cartdata");
+                location.reload(true);
             }
                 
         });
@@ -132,8 +133,10 @@ $(document).ready(function () {
                 csrfmiddlewaretoken: token
             },
             success: function (response) {
-                alertify.success(response.status)
+                alertify.success(response.status);
                 $(".wishdata").load(location.href + " .wishdata");
+
+                location.reload(true);
             }
                 
         });

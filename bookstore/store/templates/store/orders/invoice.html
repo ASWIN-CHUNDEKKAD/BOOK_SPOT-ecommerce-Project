@@ -86,10 +86,12 @@
                                                 <th colspan="2" class="text-right">Total : </th>
                                                 <th class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price }}</th>
                                             </tr>
+                                            {% if order.total_price_after_discount != order.total_price %}
                                             <tr>
                                                 <th colspan="2" class="text-right">Grand Total after discount : </th>
                                                 <th class="text-center"><i class="fa fa-inr" aria-hidden="true"></i> {{ order.total_price_after_discount }}</th>
                                             </tr>
+                                            {% endif %}
                                         </tfoot>
                                     </table>
                                 </div>

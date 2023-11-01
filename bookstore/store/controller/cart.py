@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from store.models import Product,Cart
+from django.core.cache import cache
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 '''add to cart function'''
 @login_required(login_url='loginpage')
@@ -32,11 +35,32 @@ def addtocart(request):
 
 
 '''viewcart page function'''
+@receiver([post_save, post_delete], sender=Cart)
+def invalidate_cart_cache(sender, instance, **kwargs):
+    # Construct the cache key based on the user's ID
+    cache_key = f'cart_{instance.user.id}'
+
+    # Delete the cached result associated with the cache_key
+    cache.delete(cache_key)
+
 @login_required(login_url='loginpage')
 def viewcart(request):
-    cart = Cart.objects.select_related('product').filter(user=request.user)
-    context = {'cart' : cart}
-    return render(request,'store/cart.html',context)
+    # Construct the cache key based on the user's ID
+    cache_key = f'cart_{request.user.id}'
+    
+    # Check if the result is already in the cache
+    cached_cart = cache.get(cache_key)
+
+    if cached_cart is not None:
+        context = {'cart': cached_cart}
+    else:
+        cart = Cart.objects.select_related('product').filter(user=request.user)
+        context = {'cart': cart}
+
+        # Cache the result for future requests
+        cache.set(cache_key, cart, timeout=3600)  # Cache the result for 1 hour (you can adjust this value)
+
+    return render(request, 'store/cart.html', context)
       
 '''PRODUCT QUANTITY INCREMENT FUNCTION'''          
 def updatecart(request):

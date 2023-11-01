@@ -106,7 +106,7 @@ def placeorder(request):
 
         for item in cart:
             cart_total_price += item.product.selling_price * item.product_qty
-
+        
         # Retrieve the coupon code from the session
         code = request.session.get('coupon_code', None)
 

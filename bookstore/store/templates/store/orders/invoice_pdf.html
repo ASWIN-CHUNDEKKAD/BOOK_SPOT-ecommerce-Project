@@ -101,9 +101,11 @@
         <div class="total">
             Total: {{ order.total_price }}
         </div>
+        {% if order.total_price_after_discount != order.total_price %}
         <div class="grand_total">
             Grand total after discount: {{ order.total_price_after_discount }}
         </div>
+        {% endif %}
     </div>
 </body>
 </html>

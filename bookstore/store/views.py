@@ -3,11 +3,14 @@ from django.contrib import messages
 from . models import Category,Product,Banner,Category_slider,Author,Testimonial
 from django.http.response import JsonResponse
 from django.core.cache import cache
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 # Create your views here.
 
-'''FUNCTION OF HOMEPAGE OF THE WEBSITE'''
 def home(request):
+    '''FUNCTION OF HOMEPAGE OF THE WEBSITE'''
+    
     # Construct a cache key for the home page
     cache_key = 'home_page_data'
 
@@ -39,6 +42,15 @@ def home(request):
         return render(request, 'store/index.html', cached_data)
 
 '''AUTHORS'''
+def get_authors_cache_key():
+    return 'authors'
+
+@receiver(post_save, sender=Author)
+@receiver(post_delete, sender=Author)
+def invalidate_authors_cache(sender, instance, **kwargs):
+    cache_key = get_authors_cache_key()
+    cache.delete(cache_key)
+
 def authors(request):
     # Check if data is already cached
     authors = cache.get('authors')
@@ -48,7 +60,7 @@ def authors(request):
         authors = Author.objects.all()
         
         # Cache the data for future requests
-        cache.set('authors', authors, timeout=10)  # Cache for 10 sec
+        cache.set('authors', authors, timeout=3600)  # Cache for 3600 sec
     context = {
         'authors': authors
     }
@@ -56,17 +68,29 @@ def authors(request):
     return render(request, 'store/authors/authors.html', context)
 
 '''AUTHORSVIEW PAGE'''
+def get_author_cache_key(auth_name):
+    return f'author_{auth_name}'
+
+@receiver(post_save, sender=Author)
+@receiver(post_delete, sender=Author)
+def invalidate_author_cache(sender, instance, **kwargs):
+    if hasattr(instance, 'name'):
+        author_cache_key = get_author_cache_key(instance.name)
+        cache.delete(author_cache_key)
+
+
 def authorsview(request, auth_name):
     # Check if the author data is already cached
-    author = cache.get(f'author_{auth_name}')
-    
+    author_cache_key = get_author_cache_key(auth_name)
+    author = cache.get(author_cache_key)
+
     if author is None:
         # If data is not cached, retrieve it from the database
         author = Author.objects.filter(name=auth_name).first()
-        
+
         if author:
             # Cache the author data for future requests
-            cache.set(f'author_{auth_name}', author, timeout=10)  # Cache for 10 sec
+            cache.set(author_cache_key, author, timeout=10)  # Cache for 10 sec
 
     if author:
         context = {
@@ -75,6 +99,7 @@ def authorsview(request, auth_name):
         return render(request, 'store/authors/authors_view.html', context)
     else:
         return redirect('authors')
+
     
 '''ABOUT US'''
 def about_us(request):
@@ -92,36 +117,107 @@ def about_us(request):
 
 
 '''CATEGORY OF BOOKS(FICTION, NON-FICTION,...)'''
+def get_category_list_cache_key():
+    return 'category_list_cache'
+
+@receiver(post_save, sender=Category)
+@receiver(post_delete, sender=Category)
+def invalidate_category_list_cache(sender, instance, **kwargs):
+    cache_key = get_category_list_cache_key()
+    cache.delete(cache_key)
+
 def category(request):
-    category = Category.objects.filter(status=0)
-    context = {'category':category}
-    return render(request,'store/category.html',context)
+    # Check if the category list is in the cache
+    cache_key = get_category_list_cache_key()
+    cached_data = cache.get(cache_key)
+    if cached_data is not None:
+        return cached_data
+
+    categories = Category.objects.filter(status=0)
+    context = {'category': categories}
+    # Store the data in the cache with a timeout (e.g., 3600 seconds)
+    cache.set(cache_key, render(request, 'store/category.html', context), 3600)
+    return render(request, 'store/category.html', context)
 
 '''Each category there are several books,This function represents the filteration of products by category'''
-def categoryview(request,name):
-    if(Category.objects.filter(name=name,status=0)):                
-        products = Product.objects.filter(category__name=name,status=0)
+def get_product_list_cache_key(category_name):
+    return f'product_list_{category_name}_cache'
+
+@receiver(post_save, sender=Product)
+@receiver(post_delete, sender=Product)
+def invalidate_product_list_cache(sender, instance, **kwargs):
+    if hasattr(instance, 'category'):
+        category_name = instance.category.name
+        cache_key = get_product_list_cache_key(category_name)
+        cache.delete(cache_key)
+
+def categoryview(request, name):
+    # Check if the product list is in the cache
+    product_cache_key = get_product_list_cache_key(name)
+    product_cached_data = cache.get(product_cache_key)
+
+    if product_cached_data is not None:
+        return product_cached_data
+
+    if Category.objects.filter(name=name, status=0).exists():
+        products = Product.objects.filter(category__name=name, status=0).select_related('category')
         category = Category.objects.filter(name=name).first()
-        context = {'products':products,'category':category}
-        return render(request,'store/products/index.html',context)
+        context = {
+            'products': products,
+            'category': category
+        }
+
+        # Store the data in the cache with a timeout (e.g., 3600 seconds)
+        cache.set(product_cache_key, render(request, 'store/products/index.html', context), 3600)
+        return render(request, 'store/products/index.html', context)
     else:
-        messages.warning(request,"no such category found")
+        messages.warning(request, "No such category found")
         return redirect('category')
 
-
+    
+    
 '''Detail view of each product'''
-def productview(request,cate_name,prod_name):
-    if(Category.objects.filter(name=cate_name,status=0)):
-        if(Product.objects.filter(name=prod_name,status=0)):
-            products = Product.objects.filter(name=prod_name,status=0).first()
-            context = {'products':products}
-        else:
-            messages.error(request,"No such product found")
-            return redirect('category')
+@receiver([post_save, post_delete], sender=Category)
+@receiver([post_save, post_delete], sender=Product)
+def invalidate_cache(sender, instance, **kwargs):
+    # Construct the cache key based on the instance's data
+    if sender == Category:
+        cache_key = f"productview_{instance.name}_"
+    elif sender == Product:
+        cache_key = f"productview_{instance.category.name}_{instance.name}"
+
+    # Delete the cached result associated with the cache_key
+    cache.delete(cache_key)
+
+# Connect the signal handlers
+post_save.connect(invalidate_cache, sender=Category)
+post_delete.connect(invalidate_cache, sender=Category)
+post_save.connect(invalidate_cache, sender=Product)
+post_delete.connect(invalidate_cache, sender=Product)
+
+def productview(request, cate_name, prod_name):
+    # Check if the result is already in the cache
+    cache_key = f"productview_{cate_name}_{prod_name}"
+    cached_result = cache.get(cache_key)
+
+    if cached_result is not None:
+        context = cached_result
     else:
-        messages.error(request,"No such category found")
-        return redirect('category')
-    return render(request,'store/products/view.html',context)
+        if Category.objects.filter(name=cate_name, status=0).exists():
+            if Product.objects.filter(name=prod_name, status=0).exists():
+                products = Product.objects.filter(name=prod_name, status=0).first()
+                context = {'products': products}
+            else:
+                messages.error(request, "No such product found")
+                return redirect('category')
+        else:
+            messages.error(request, "No such category found")
+            return redirect('category')
+
+        # Cache the result for future requests
+        cache.set(cache_key, context, timeout=3600)  # Cache the result for 1 hour (you can adjust this value)
+
+    return render(request, 'store/products/view.html', context)
 
 def productlistAjax(request):
     products = Product.objects.filter(status=0).values_list('name',flat=True)

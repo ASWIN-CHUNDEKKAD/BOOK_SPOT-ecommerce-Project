@@ -11,9 +11,10 @@ from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 
 from django.utils import timezone
 
-'''CHECKOUT PAGE FUNCTION '''
+# ...START- FUNCTION OF CHECKOUT PAGE...
 @login_required(login_url='loginpage')
 def index(request):
+    '''CHECKOUT PAGE FUNCTION '''
     cartitems = Cart.objects.select_related('product').filter(user=request.user)
     for item in cartitems:
         if item.product_qty > item.product.quantity:
@@ -76,10 +77,15 @@ def index(request):
             
             }
     return render(request,'store/checkout.html',context)
+# ...END- FUNCTION OF CHECKOUT PAGE...
 
-'''PLACEORDER FUNCTION'''
+
+
+
+# ...START- FUNCTION OF PLACEORDER...
 @login_required(login_url='loginpage')
 def placeorder(request):
+    '''PLACEORDER FUNCTION'''
     total_price_after_discount = None  # Initialize with a default value
 
     if request.method == "POST":
@@ -184,11 +190,15 @@ def placeorder(request):
             messages.success(request, "Your order has been placed successfully")
 
     return redirect('/')
+# ...END- FUNCTION OF PLACEORDER...
 
 
-'''RAZORPAY FUNCTION'''
+
+
+# ...START- FUNCTION OF RAZORPAY...
 @login_required(login_url='loginpage')
 def razorpaycheck(request):
+    '''RAZORPAY FUNCTION'''
     # Calculate the total price after applying any discount
     total_price = Cart.objects.filter(user=request.user).aggregate(
         total_price=Sum(
@@ -204,3 +214,4 @@ def razorpaycheck(request):
 
     # Pass both total price and discount_total to the Razorpay page
     return JsonResponse({'total_price': total_price, 'discount_total': discount_total})
+# ...END- FUNCTION OF RAZORPAY...

@@ -8,9 +8,11 @@ from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-'''add to cart function'''
+
+# ...START- FUNCTION OF ADD TO CART...
 @login_required(login_url='loginpage')
 def addtocart(request):
+    '''FUNCTION OF ADD TO CART'''
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
@@ -32,9 +34,12 @@ def addtocart(request):
         else:
             return JsonResponse({'status':"Login to continue"}) 
     return redirect('/')    
+# ...END- FUNCTION OF ADD TO CART...
 
 
-'''viewcart page function'''
+
+
+# ...START- FUNCTION OF VIEW CART PAGE...
 @receiver([post_save, post_delete], sender=Cart)
 def invalidate_cart_cache(sender, instance, **kwargs):
     # Construct the cache key based on the user's ID
@@ -45,6 +50,7 @@ def invalidate_cart_cache(sender, instance, **kwargs):
 
 @login_required(login_url='loginpage')
 def viewcart(request):
+    '''FUNCTION OF VIEW CART PAGE'''
     # Construct the cache key based on the user's ID
     cache_key = f'cart_{request.user.id}'
     
@@ -61,9 +67,14 @@ def viewcart(request):
         cache.set(cache_key, cart, timeout=3600)  # Cache the result for 1 hour (you can adjust this value)
 
     return render(request, 'store/cart.html', context)
+# ...END- FUNCTION OF VIEW CART PAGE...
+
+
+
       
-'''PRODUCT QUANTITY INCREMENT FUNCTION'''          
+# ...START- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 def updatecart(request):
+    '''PRODUCT QUANTITY INCREMENT FUNCTION'''
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
         if(Cart.objects.filter(user = request.user,product_id=prod_id)):
@@ -73,9 +84,14 @@ def updatecart(request):
             cart.save()
         return JsonResponse({'status' : 'Updated Successfully'})
     return redirect('/')
+# ...END- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 
-'''DELETe CART FUNCTION'''
+
+
+
+# ...START- FUNCTION OF DELETE CART...
 def deletecartitem(request):
+    '''DELETe CART FUNCTION'''
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
         if(Cart.objects.filter(user = request.user,product_id=prod_id)):
@@ -88,7 +104,7 @@ def deletecartitem(request):
 
         return JsonResponse({'status' : 'Updated Successfully'})
     return redirect('/')
-            
+# ...END- FUNCTION OF DELETE CART...          
         
 
 

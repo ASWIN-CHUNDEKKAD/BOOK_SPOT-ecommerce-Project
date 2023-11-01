@@ -8,6 +8,8 @@ from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
+
+# ...START- FUNCTION OF WISHLIST INDEX PAGE...
 @receiver([post_save, post_delete], sender=Wishlist)
 def invalidate_cache(sender, instance, **kwargs):
     # Construct the cache key based on the user's ID
@@ -18,6 +20,7 @@ def invalidate_cache(sender, instance, **kwargs):
 
 @login_required(login_url='loginpage')
 def index(request):
+    '''FUNCTION OF WISHLIST INDEX PAGE'''
     # Check if the result is already in the cache
     cache_key = f"wishlist_{request.user.id}"
     cached_wishlist = cache.get(cache_key)
@@ -32,8 +35,12 @@ def index(request):
         cache.set(cache_key, wishlist, timeout=3600)  # Cache the result for 1 hour (you can adjust this value)
 
     return render(request, 'store/wishlist.html', context)
+# ...START- FUNCTION OF WISHLIST INDEX PAGE...
 
-'''ADD TO WISHLIST'''
+
+
+
+# ...START- ADD TO WISHLIST FUNCTION...
 @receiver([post_save, post_delete], sender=Wishlist)
 def invalidate_wishlist_cache(sender, instance, **kwargs):
     # Construct the cache key based on the user's ID
@@ -43,6 +50,7 @@ def invalidate_wishlist_cache(sender, instance, **kwargs):
     cache.delete(cache_key)
 
 def addtowishlist(request):
+    '''ADD TO WISHLIST'''
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
@@ -62,8 +70,12 @@ def addtowishlist(request):
             return JsonResponse({'status': 'Login to continue'})
 
     return redirect('/')
+# ...END- ADD TO WISHLIST FUNCTION...
 
-'''DELETe FUNCTIONALITY'''
+
+
+
+# ...START- DELETE WISHLIST FUNCTION...
 @receiver(post_delete, sender=Wishlist)
 def invalidate_wishlist_cache(sender, instance, **kwargs):
     # Construct the cache key based on the user's ID
@@ -73,6 +85,7 @@ def invalidate_wishlist_cache(sender, instance, **kwargs):
     cache.delete(cache_key)
 
 def deletewishlistitem(request):
+    '''DELETe WISHLIST FUNCTIONALITY'''
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
@@ -98,3 +111,4 @@ def deletewishlistitem(request):
             return JsonResponse({'status': 'Login to continue'})
 
     return redirect('/')
+# ...START- DELETE WISHLIST FUNCTION...

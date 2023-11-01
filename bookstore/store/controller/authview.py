@@ -13,6 +13,7 @@ from store.models import User
 # ...START- FUNCTION OF VERIFICATION OF EMAIL THROUGH OTP...
 @csrf_exempt
 def VerifyOTP(request):
+    '''VERIFICATION OF OTP'''
     user = None
     if request.method == "POST":
         userotp = request.POST.get('otp')
@@ -42,10 +43,14 @@ def VerifyOTP(request):
     if user is not None:
         pass
     return JsonResponse({'error': 'Invalid otp'}, status=400)
+# ...END- FUNCTION OF VERIFICATION OF EMAIL THROUGH OTP...
 
 
-'''USER REGISTRATION'''
+
+
+# ...START- FUNCTION OF USER REGISTRATION...
 def register(request):
+    '''USER REGISTRATION'''
     if request.user.is_authenticated:
         messages.warning(request, "You are Logged in")
         return redirect('home')
@@ -63,9 +68,14 @@ def register(request):
             form = CustomUserForm()
         context = {'form': form}
         return render(request, 'store/auth/register.html', context)
+# ...END- FUNCTION OF USER REGISTRATION...
 
-'''LOGIN PAGE FUNCTIONALITY'''
+
+
+
+# ...START- FUNCTION OF LOGIN PAGE FUNCTIONALITY...
 def loginpage(request):
+    '''LOGIN PAGE FUNCTIONALITY'''
     if request.user.is_authenticated:
         messages.warning(request,"You are Logged in")
         return redirect('home')
@@ -85,15 +95,18 @@ def loginpage(request):
                 return redirect('loginpage')
         
         return render(request,'store/auth/login.html')
+# ...START- FUNCTION OF LOGIN PAGE FUNCTIONALITY...
+
+
+
+
     
-    
-'''LOGOUT'''
+# ...START- FUNCTION OF LOGOUT...
 def logoutpage(request):
+    '''LOGOUT'''
     if request.user.is_authenticated:
         logout(request)
         messages.success(request,"Logout Successfully")
     return redirect('home')
+# ...END- FUNCTION OF LOGOUT...
 
-# '''EDIT PROFILE FUNCTIONALITY'''
-# def edit_profile(request):
-#     return render(request,'store/auth/edit_profile.html')

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views 
 
 from store.controller import authview, cart, wishlist,checkout,order
 
@@ -21,6 +22,12 @@ urlpatterns = [
     path('login',authview.loginpage,name='loginpage'),
     path('logout',authview.logoutpage,name='logout'),
     path('verifyEmail',authview.VerifyOTP, name='verifyEmail'),
+    
+    # reset password
+    path('password_reset/',auth_views.PasswordResetView.as_view(template_name='store/auth/password_reset/password_reset_form.html'),name='password_reset'),
+    path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(template_name='store/auth/password_reset/password_reset_done.html'),name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='store/auth/password_reset/password_reset_confirm.html'),name='password_reset_confirm'),
+    path('reset/done/',auth_views.PasswordResetCompleteView.as_view(template_name='store/auth/password_reset/password_reset_complete.html'),name='password_reset_complete'),
     
     # cart
     path('add-to-cart',cart.addtocart,name='addtocart'),

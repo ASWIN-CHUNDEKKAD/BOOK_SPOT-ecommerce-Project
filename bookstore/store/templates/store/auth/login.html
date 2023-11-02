@@ -25,6 +25,8 @@
                                 <input type="password" class="form-control" name="password" placeholder="Enter Password">
                             </div>
                             <br>
+                            Dont have an account? <a href="{% url 'register' %}" class="text-primary fw-bold">Sign Up</a>
+                            <a href="{% url 'password_reset' %}">Forgotten your password ?</a>
                             <button type="submit" class="btn float-end shadow btn-success px-4">Login</button>
                         </form>
 

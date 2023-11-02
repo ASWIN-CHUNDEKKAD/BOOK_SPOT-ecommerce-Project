@@ -44,6 +44,8 @@
                                 <label class="text-danger">{{form.errors.password2}}</label>
                                 {% endif %}
                             </div>
+                            <br>
+                            Allready account? <a href="{% url 'loginpage' %}" class="text-primary fw-bold">Login</a>
                             <button type="submit" class="btn float-end shadow btn-success px-4">Register</button>
                         </form>
 

@@ -13,7 +13,7 @@
                         <form action="" method="POST">
                             {% csrf_token %}
                             <div class="text-center">
-                                <h4>Login</h4>
+                                <h4 class="fw-bold">Login</h4>
                             </div>
                             <hr style="height:2px;border-width:2px;color:red;background-color:red">
                             <div class="form-group">
@@ -25,9 +25,10 @@
                                 <input type="password" class="form-control" name="password" placeholder="Enter Password">
                             </div>
                             <br>
-                            Dont have an account? <a href="{% url 'register' %}" class="text-primary fw-bold">Sign Up</a>
+                            <button type="submit" class="btn  shadow btn-success w-100 mb-3">Login</button>
+                            <p>Dont have an account? <a href="{% url 'register' %}" class="text-primary fw-bold ">Sign Up</a></p>
                             <a href="{% url 'password_reset' %}">Forgotten your password ?</a>
-                            <button type="submit" class="btn float-end shadow btn-success px-4">Login</button>
+                            
                         </form>
 
                     </div>

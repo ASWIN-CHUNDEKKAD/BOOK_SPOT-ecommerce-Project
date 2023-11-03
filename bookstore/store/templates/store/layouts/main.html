@@ -56,6 +56,40 @@
             font-weight:550;
         }
 
+
+{% comment %} Reset password form styling {% endcomment %}
+        .form-container {
+            margin-top: 10px; /* Add top margin for spacing */
+        }
+
+        
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            width: 50%; /* Make the input fields take up the full width of their container */
+            padding: 10px; /* Add some padding for better readability */
+            margin-bottom: 10px; /* Add bottom margin for spacing between input fields */
+            border: 1px solid #ccc; /* Add a border for input fields */
+            border-radius: 5px; /* Add rounded corners to input fields */
+        }
+
+        
+        .form-container input[type="submit"] {
+            width: 100%; /* Make the button take up the full width of its container */
+            padding: 10px; /* Add padding for better appearance */
+            background-color: #007bff; /* Set the background color */
+            color: #fff; /* Set the text color to white */
+            border: none; /* Remove the button border */
+            border-radius: 5px; /* Add rounded corners to the button */
+            cursor: pointer; /* Add a pointer cursor on hover */
+        }
+
+        
+        .form-container .error-message {
+            color: #ff0000; /* Set the text color to red for error messages */
+        }
+{% comment %}End Reset password form styling {% endcomment %}
+
     </style>
 
 </head>

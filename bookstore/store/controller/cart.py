@@ -77,12 +77,19 @@ def updatecart(request):
     '''PRODUCT QUANTITY INCREMENT FUNCTION'''
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
-        if(Cart.objects.filter(user = request.user,product_id=prod_id)):
-            prod_qty = request.POST.get('product_qty')
-            cart = Cart.objects.get(product_id=prod_id,user=request.user)
-            cart.product_qty = prod_qty
-            cart.save()
-        return JsonResponse({'status' : 'Updated Successfully'})
+        if Cart.objects.filter(user=request.user, product_id=prod_id):
+            prod_qty = int(request.POST.get('product_qty'))
+            cart = Cart.objects.get(product_id=prod_id, user=request.user)
+            
+            if prod_qty < 10:
+                cart.product_qty = prod_qty
+                cart.save()
+                return JsonResponse({'status': 'Updated Successfully'})
+            else:
+                # Display an alert when the limit is reached
+                messages.error(request, 'Limit reached: You cannot increment beyond 10.')
+                return JsonResponse({'status': 'Limit Reached,You cannot increment beyond 10'})
+            
     return redirect('/')
 # ...END- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 

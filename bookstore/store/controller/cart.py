@@ -12,7 +12,7 @@ from django.dispatch import receiver
 # ...START- FUNCTION OF ADD TO CART...
 # @login_required(login_url='loginpage')
 def addtocart(request):
-    '''FUNCTION OF ADD TO CART'''
+    '''FUNCTIONALITY OF ADD TO CART'''
     if request.method == 'POST':
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))

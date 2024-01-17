@@ -98,7 +98,7 @@ def updatecart(request):
 
 # ...START- FUNCTION OF DELETE CART...
 def deletecartitem(request):
-    '''DELETe CART FUNCTION'''
+    '''DELETe CART FUNCTIONALITY'''
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
         if(Cart.objects.filter(user = request.user,product_id=prod_id)):

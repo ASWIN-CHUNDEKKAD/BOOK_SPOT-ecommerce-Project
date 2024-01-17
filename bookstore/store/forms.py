@@ -28,14 +28,6 @@ class CustomUserForm(UserCreationForm):
             raise forms.ValidationError("This email is already in use. Please use a different email.")
         return email
     
-# class Userform(User):
-#     class Meta:
-#         model = User
-#         fields = ('first_name','last_name')
-        
-# class Profileform(Profile):
-#     class Meta:
-#         model = Profile
-#         fields = ('phone','address','city','state','country','pincode')
+
         
         

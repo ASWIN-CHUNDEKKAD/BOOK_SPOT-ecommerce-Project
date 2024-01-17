@@ -74,7 +74,7 @@ def viewcart(request):
       
 # ...START- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 def updatecart(request):
-    '''PRODUCT QUANTITY INCREMENT FUNCTION'''
+    '''PRODUCT QUANTITY INCREMENT FUNCTIONALITY'''
     if request.method == 'POST':
         prod_id = int(request.POST.get("product_id"))
         if Cart.objects.filter(user=request.user, product_id=prod_id):

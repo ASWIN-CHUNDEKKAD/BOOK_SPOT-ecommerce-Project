@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 # ...START- FUNCTION OF HOME PAGE...
 def home(request):
-    '''FUNCTION OF HOMEPAGE OF THE WEBSITE'''
+    '''FUNCTIONALITY OF HOMEPAGE OF THE WEBSITE'''
     
     # Construct a cache key for the home page
     cache_key = 'home_page_data'

@@ -27,7 +27,7 @@ def index(request):
 
 # ...START- FUNCTION OF DETAILES OF EACH ORDER...
 def vieworder(request,t_no):
-    '''DETAILES OF EACH ORDER'''
+    '''FUNCTIONALITY DETAILES OF EACH ORDER'''
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order).select_related('product')
     context = {
@@ -42,7 +42,7 @@ def vieworder(request,t_no):
 
 # ...START- FUNCTION OF INVOICE...
 def invoice(request,t_no):
-    '''INVOICE'''
+    '''FUNCTIONALITY INVOICE'''
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order).select_related('product')
     context = {
@@ -70,7 +70,7 @@ def invoice_pdf(template_source, context_dict={}):
 
 # CONTEXT PASSING IN GENERATED PDF
 def generate_pdf(request,t_no):
-    '''GENERATION OF PDF'''
+    ''' FUNCTIONALITY OFGENERATION OF PDF'''
     # order = Order.objects.filter(user=request.user).first()
     order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
     orderitems = Orderitem.objects.filter(order=order)

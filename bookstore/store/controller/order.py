@@ -15,7 +15,7 @@ from reportlab.lib.units import cm  # Import units (e.g., cm for margins)
 
 # ...START- FUNCTION OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED...
 def index(request):
-    '''FUNCTION OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED'''
+    '''FUNCTIONALITY OF ORDER PAGE ,IN THIS PAGE ORDER HISTORY DISPLAYED'''
     orders = Order.objects.filter(user=request.user)
     orders = reversed(orders)
     context = {'orders':orders}

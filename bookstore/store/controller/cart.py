@@ -37,8 +37,6 @@ def addtocart(request):
 # ...END- FUNCTION OF ADD TO CART...
 
 
-
-
 # ...START- FUNCTION OF VIEW CART PAGE...
 @receiver([post_save, post_delete], sender=Cart)
 def invalidate_cart_cache(sender, instance, **kwargs):

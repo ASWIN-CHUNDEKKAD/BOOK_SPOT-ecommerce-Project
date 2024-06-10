@@ -68,7 +68,6 @@ def viewcart(request):
 # ...END- FUNCTION OF VIEW CART PAGE...
 
 
-
       
 # ...START- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 def updatecart(request):

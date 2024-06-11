@@ -92,7 +92,6 @@ def updatecart(request):
 
 
 
-
 # ...START- FUNCTION OF DELETE CART...
 def deletecartitem(request):
     '''DELETe CART FUNCTIONALITY'''

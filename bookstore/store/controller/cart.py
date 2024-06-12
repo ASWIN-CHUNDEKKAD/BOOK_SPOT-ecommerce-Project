@@ -67,7 +67,6 @@ def viewcart(request):
     return render(request, 'store/cart.html', context)
 # ...END- FUNCTION OF VIEW CART PAGE...
 
-
       
 # ...START- FUNCTION OF PRODUCT QUANTITY INCREMENT...
 def updatecart(request):

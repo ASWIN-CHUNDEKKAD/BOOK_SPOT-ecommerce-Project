@@ -37,6 +37,7 @@ def addtocart(request):
 # ...END- FUNCTION OF ADD TO CART...
 
 
+
 # ...START- FUNCTION OF VIEW CART PAGE...
 @receiver([post_save, post_delete], sender=Cart)
 def invalidate_cart_cache(sender, instance, **kwargs):
@@ -66,6 +67,7 @@ def viewcart(request):
 
     return render(request, 'store/cart.html', context)
 # ...END- FUNCTION OF VIEW CART PAGE...
+
 
       
 # ...START- FUNCTION OF PRODUCT QUANTITY INCREMENT...

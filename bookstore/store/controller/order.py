@@ -24,7 +24,6 @@ def index(request):
 
 
 
-
 # ...START- FUNCTION OF DETAILES OF EACH ORDER...
 def vieworder(request,t_no):
     '''FUNCTIONALITY DETAILES OF EACH ORDER'''

@@ -24,7 +24,6 @@ def index(request):
 
 
 
-
 # ...START- FUNCTION OF DETAILES OF EACH ORDER...
 def vieworder(request,t_no):
     '''FUNCTIONALITY DETAILES OF EACH ORDER'''
@@ -39,7 +38,6 @@ def vieworder(request,t_no):
 
 
 
-
 # ...START- FUNCTION OF INVOICE...
 def invoice(request,t_no):
     '''FUNCTIONALITY INVOICE'''
@@ -51,7 +49,6 @@ def invoice(request,t_no):
         }
     return render(request,'store/orders/invoice.html',context)
 # ...END- FUNCTION OF INVOICE...
-
 
 
 

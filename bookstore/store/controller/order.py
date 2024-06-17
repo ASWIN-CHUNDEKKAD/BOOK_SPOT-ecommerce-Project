@@ -74,7 +74,7 @@ def generate_pdf(request,t_no):
     
     context = {
         'order': order,
-        'orderitems': orderitems,
+        'orderitems': orderitems
     }
     
     pdf = invoice_pdf("store/orders/invoice_pdf.html", context)

@@ -65,7 +65,6 @@ def invoice_pdf(template_source, context_dict={}):
         return response
     return HttpResponse("PDF generation failed", content_type="text/plain")
 
-
 # CONTEXT PASSING IN GENERATED PDF
 def generate_pdf(request,t_no):
     ''' FUNCTIONALITY OFGENERATION OF PDF'''
